@@ -1,0 +1,1416 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CAR-T Immune Reset - Premium Animation</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;900&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: #000;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            color: white;
+            overflow: hidden;
+        }
+
+        canvas {
+            border-radius: 20px;
+            box-shadow: 0 25px 100px rgba(0, 255, 136, 0.15),
+                        0 10px 40px rgba(0, 213, 255, 0.15);
+            max-width: 95%;
+            height: auto;
+            background: #000;
+        }
+
+        .controls {
+            margin-top: 30px;
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            justify-content: center;
+            z-index: 10;
+        }
+
+        .btn {
+            padding: 16px 32px;
+            background: linear-gradient(135deg, rgba(0, 255, 136, 0.1), rgba(0, 213, 255, 0.1));
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: #fff;
+            border-radius: 50px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+            letter-spacing: 0.5px;
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #00ff88, #00d4ff);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            z-index: -1;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(0, 255, 136, 0.3);
+            border-color: rgba(0, 255, 136, 0.5);
+        }
+
+        .btn:hover::before {
+            opacity: 0.1;
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .recording {
+            background: linear-gradient(135deg, rgba(255, 59, 48, 0.2), rgba(255, 59, 48, 0.1));
+            border-color: rgba(255, 59, 48, 0.5);
+            color: #ff3b30;
+            animation: recordPulse 1.5s ease-in-out infinite;
+        }
+
+        @keyframes recordPulse {
+            0%, 100% { 
+                box-shadow: 0 0 0 0 rgba(255, 59, 48, 0.4);
+            }
+            50% { 
+                box-shadow: 0 0 0 20px rgba(255, 59, 48, 0);
+            }
+        }
+
+        .info {
+            margin-top: 20px;
+            text-align: center;
+            color: rgba(255, 255, 255, 0.6);
+            max-width: 600px;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .download-link {
+            display: none;
+            margin-top: 20px;
+            padding: 18px 40px;
+            background: linear-gradient(135deg, #00ff88, #00d4ff);
+            color: #000;
+            text-decoration: none;
+            border-radius: 50px;
+            font-weight: 700;
+            font-size: 16px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 10px 40px rgba(0, 255, 136, 0.3);
+        }
+
+        .download-link:hover {
+            transform: scale(1.05) translateY(-2px);
+            box-shadow: 0 15px 50px rgba(0, 255, 136, 0.4);
+        }
+
+        /* Ambient background effect */
+        body::before {
+            content: '';
+            position: fixed;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle at 20% 50%, rgba(0, 255, 136, 0.1) 0%, transparent 50%),
+                        radial-gradient(circle at 80% 50%, rgba(0, 213, 255, 0.1) 0%, transparent 50%);
+            animation: ambientMove 20s ease-in-out infinite;
+            z-index: -1;
+        }
+
+        @keyframes ambientMove {
+            0%, 100% { transform: translate(0, 0) rotate(0deg); }
+            50% { transform: translate(-20px, 20px) rotate(180deg); }
+        }
+    </style>
+</head>
+<body>
+    <canvas id="canvas" width="1920" height="1080"></canvas>
+    
+    <div class="controls">
+        <button class="btn" id="playBtn">Play Animation</button>
+        <button class="btn" id="recordBtn">Record Video</button>
+        <button class="btn" id="resetBtn">Reset</button>
+    </div>
+
+    <a id="downloadLink" class="download-link" download="car-t-immune-reset-hd.webm">Download HD Video</a>
+
+    <div class="info">
+        <p>Experience the future of autoimmune therapy. Click "Record Video" to capture this animation in HD.</p>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+        const playBtn = document.getElementById('playBtn');
+        const recordBtn = document.getElementById('recordBtn');
+        const resetBtn = document.getElementById('resetBtn');
+        const downloadLink = document.getElementById('downloadLink');
+
+        // Enable smooth rendering
+        ctx.imageSmoothingEnabled = true;
+        ctx.imageSmoothingQuality = 'high';
+
+        // Animation state
+        let animationFrame = 0;
+        let isPlaying = false;
+        let isRecording = false;
+        let mediaRecorder;
+        let recordedChunks = [];
+        let particleEffects = [];
+
+        // Animation settings
+        const fps = 60;
+        const totalFrames = fps * 24;
+        const stageFrames = totalFrames / 4;
+
+        // Modern color palette
+        const colors = {
+            primary: '#00ff88',
+            secondary: '#00d4ff',
+            accent: '#ff3366',
+            warning: '#ff6b6b',
+            success: '#00ff88',
+            tcell: '#ff8c42',
+            bcell: '#4361ee',
+            bcellAuto: '#f72585',
+            background: '#0a0e27',
+            backgroundLight: '#1a1f3a'
+        };
+
+        // Statistics tracking
+        let stats = {
+            bcellsKilled: 0,
+            tcellsEngineered: 0
+        };
+
+        // Particle system with modern physics
+        class Particle {
+            constructor(x, y, radius, color, type = 'cell') {
+                this.x = x;
+                this.y = y;
+                this.radius = radius;
+                this.baseRadius = radius;
+                this.color = color;
+                this.type = type;
+                this.vx = 0;
+                this.vy = 0;
+                this.opacity = 1;
+                this.pulse = 0;
+                this.engineered = false;
+                this.targetX = x;
+                this.targetY = y;
+                this.rotation = 0;
+                this.glowIntensity = 1;
+                this.trail = [];
+                this.maxTrailLength = 10;
+                this.alive = true;
+                this.dyingAnimation = false;
+                this.deathTimer = 0;
+            }
+
+            draw() {
+                if (!this.alive && this.opacity <= 0) return;
+
+                // Update trail for engineered cells
+                if (this.engineered && this.trail.length < this.maxTrailLength) {
+                    this.trail.push({ x: this.x, y: this.y, opacity: this.opacity });
+                }
+                if (this.trail.length > this.maxTrailLength) {
+                    this.trail.shift();
+                }
+
+                // Draw trail
+                this.trail.forEach((point, index) => {
+                    ctx.save();
+                    ctx.globalAlpha = point.opacity * (index / this.trail.length) * 0.3;
+                    ctx.fillStyle = this.color;
+                    ctx.beginPath();
+                    ctx.arc(point.x, point.y, this.radius * 0.5 * (index / this.trail.length), 0, Math.PI * 2);
+                    ctx.fill();
+                    ctx.restore();
+                });
+
+                ctx.save();
+                ctx.globalAlpha = this.opacity;
+                
+                if (this.type === 'lnp') {
+                    // Modern LNP design
+                    // Outer glow
+                    const glowGradient = ctx.createRadialGradient(this.x, this.y, 0, this.x, this.y, this.radius * 2);
+                    glowGradient.addColorStop(0, this.color + '40');
+                    glowGradient.addColorStop(1, 'transparent');
+                    ctx.fillStyle = glowGradient;
+                    ctx.fillRect(this.x - this.radius * 2, this.y - this.radius * 2, this.radius * 4, this.radius * 4);
+                    
+                    // Main particle
+                    const gradient = ctx.createRadialGradient(this.x, this.y, 0, this.x, this.y, this.radius);
+                    gradient.addColorStop(0, '#ffffff');
+                    gradient.addColorStop(0.3, this.color);
+                    gradient.addColorStop(1, this.adjustBrightness(this.color, -30));
+                    
+                    ctx.fillStyle = gradient;
+                    ctx.beginPath();
+                    ctx.arc(this.x, this.y, Math.max(0.1, this.radius + this.pulse), 0, Math.PI * 2);
+                    ctx.fill();
+                    
+                    // Internal structure - DNA helix effect
+                    ctx.save();
+                    ctx.translate(this.x, this.y);
+                    ctx.rotate(this.rotation);
+                    ctx.strokeStyle = 'rgba(255, 255, 255, 0.8)';
+                    ctx.lineWidth = 3;
+                    ctx.lineCap = 'round';
+                    
+                    for (let i = 0; i < 3; i++) {
+                        ctx.beginPath();
+                        const offset = (i - 1) * 15;
+                        for (let j = 0; j < 10; j++) {
+                            const x = offset;
+                            const y = (j - 5) * 8;
+                            const phase = j * 0.5 + Date.now() * 0.003;
+                            ctx.lineTo(x + Math.sin(phase) * 10, y);
+                        }
+                        ctx.stroke();
+                    }
+                    ctx.restore();
+                    
+                } else if (this.type === 'effect') {
+                    // Effect particles (for death animation)
+                    ctx.fillStyle = this.color;
+                    ctx.beginPath();
+                    ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+                    ctx.fill();
+                } else {
+                    // Modern cell design with depth
+                    const currentRadius = Math.max(0.1, this.radius + this.pulse);
+                    
+                    // Death animation effect
+                    if (this.dyingAnimation) {
+                        ctx.save();
+                        ctx.globalAlpha = this.opacity * 0.5;
+                        ctx.strokeStyle = this.color;
+                        ctx.lineWidth = 2;
+                        ctx.beginPath();
+                        ctx.arc(this.x, this.y, currentRadius + this.deathTimer * 20, 0, Math.PI * 2);
+                        ctx.stroke();
+                        ctx.restore();
+                    }
+                    
+                    // Outer glow
+                    const glowSize = this.engineered ? 3 : 2;
+                    const glowGradient = ctx.createRadialGradient(this.x, this.y, currentRadius * 0.8, this.x, this.y, currentRadius * glowSize);
+                    glowGradient.addColorStop(0, this.color + '60');
+                    glowGradient.addColorStop(1, 'transparent');
+                    ctx.fillStyle = glowGradient;
+                    ctx.fillRect(this.x - currentRadius * glowSize, this.y - currentRadius * glowSize, currentRadius * glowSize * 2, currentRadius * glowSize * 2);
+                    
+                    // Cell membrane
+                    ctx.strokeStyle = this.color + '80';
+                    ctx.lineWidth = 3;
+                    ctx.beginPath();
+                    ctx.arc(this.x, this.y, currentRadius, 0, Math.PI * 2);
+                    ctx.stroke();
+                    
+                    // Main cell body
+                    const gradient = ctx.createRadialGradient(
+                        this.x - currentRadius * 0.3, 
+                        this.y - currentRadius * 0.3, 
+                        0, 
+                        this.x, 
+                        this.y, 
+                        currentRadius
+                    );
+                    gradient.addColorStop(0, this.adjustBrightness(this.color, 30));
+                    gradient.addColorStop(0.5, this.color);
+                    gradient.addColorStop(1, this.adjustBrightness(this.color, -40));
+                    
+                    ctx.fillStyle = gradient;
+                    ctx.beginPath();
+                    ctx.arc(this.x, this.y, Math.max(0.1, currentRadius - 3), 0, Math.PI * 2);
+                    ctx.fill();
+                    
+                    // Nucleus
+                    if (currentRadius > 10) {
+                        ctx.fillStyle = this.adjustBrightness(this.color, -60);
+                        ctx.beginPath();
+                        ctx.arc(this.x, this.y, Math.max(0.1, currentRadius * 0.3), 0, Math.PI * 2);
+                        ctx.fill();
+                    }
+                    
+                    // CAR receptors for engineered T cells
+                    if (this.engineered && currentRadius > 15) {
+                        ctx.strokeStyle = '#ff0066';
+                        ctx.lineWidth = 4;
+                        ctx.lineCap = 'round';
+                        ctx.shadowBlur = 10;
+                        ctx.shadowColor = '#ff0066';
+                        
+                        for (let i = 0; i < 12; i++) {
+                            const angle = (i / 12) * Math.PI * 2 + this.rotation;
+                            const x1 = this.x + Math.cos(angle) * currentRadius;
+                            const y1 = this.y + Math.sin(angle) * currentRadius;
+                            const x2 = this.x + Math.cos(angle) * (currentRadius + 15);
+                            const y2 = this.y + Math.sin(angle) * (currentRadius + 15);
+                            
+                            // Receptor stem
+                            ctx.beginPath();
+                            ctx.moveTo(x1, y1);
+                            ctx.lineTo(x2, y2);
+                            ctx.stroke();
+                            
+                            // Y-shaped binding site
+                            ctx.beginPath();
+                            ctx.arc(x2, y2, 4, 0, Math.PI * 2);
+                            ctx.fillStyle = '#ff0066';
+                            ctx.fill();
+                            
+                            // Binding arms
+                            ctx.beginPath();
+                            ctx.moveTo(x2, y2);
+                            ctx.lineTo(x2 + Math.cos(angle - 0.5) * 8, y2 + Math.sin(angle - 0.5) * 8);
+                            ctx.moveTo(x2, y2);
+                            ctx.lineTo(x2 + Math.cos(angle + 0.5) * 8, y2 + Math.sin(angle + 0.5) * 8);
+                            ctx.stroke();
+                        }
+                        ctx.shadowBlur = 0;
+                    }
+                }
+                
+                ctx.restore();
+            }
+
+            adjustBrightness(color, percent) {
+                const num = parseInt(color.replace("#", ""), 16);
+                const amt = Math.round(2.55 * percent);
+                const R = Math.max(0, Math.min(255, (num >> 16) + amt));
+                const G = Math.max(0, Math.min(255, (num >> 8 & 0x00FF) + amt));
+                const B = Math.max(0, Math.min(255, (num & 0x0000FF) + amt));
+                return "#" + ((1 << 24) + (R << 16) + (G << 8) + B).toString(16).slice(1);
+            }
+
+            update() {
+                // Smooth movement
+                const dx = this.targetX - this.x;
+                const dy = this.targetY - this.y;
+                this.x += dx * 0.08;
+                this.y += dy * 0.08;
+                
+                // Add slight random movement for organic feel
+                if (!this.dyingAnimation) {
+                    this.x += (Math.random() - 0.5) * 0.5;
+                    this.y += (Math.random() - 0.5) * 0.5;
+                }
+                
+                // Pulsing effect
+                this.pulse = Math.sin(Date.now() * 0.003 + this.x * 0.01) * 3;
+                this.rotation += 0.01;
+                
+                // Update trail
+                this.trail = this.trail.map(point => ({
+                    ...point,
+                    opacity: point.opacity * 0.95
+                }));
+
+                // Handle death animation
+                if (this.dyingAnimation) {
+                    this.deathTimer += 0.02;
+                    this.opacity = Math.max(0, this.opacity - 0.03);
+                    this.radius = Math.max(0.1, this.radius * 0.95);
+                    
+                    if (this.opacity <= 0) {
+                        this.alive = false;
+                    }
+                }
+            }
+
+            startDying() {
+                this.dyingAnimation = true;
+                this.deathTimer = 0;
+                
+                // Create particle burst effect
+                for (let i = 0; i < 8; i++) {
+                    const angle = (i / 8) * Math.PI * 2;
+                    const speed = 2 + Math.random() * 3;
+                    const particle = new Particle(
+                        this.x,
+                        this.y,
+                        3,
+                        this.color,
+                        'effect'
+                    );
+                    particle.vx = Math.cos(angle) * speed;
+                    particle.vy = Math.sin(angle) * speed;
+                    particle.opacity = 0.8;
+                    particleEffects.push(particle);
+                }
+            }
+        }
+
+        // Modern tissue visualization
+        class Tissue {
+            constructor(x, y, width, height, name, color) {
+                this.x = x;
+                this.y = y;
+                this.width = width;
+                this.height = height;
+                this.name = name;
+                this.color = color;
+                this.bcells = [];
+                this.opacity = 0.9;
+                this.pulse = 0;
+                this.depleted = false;
+            }
+
+            draw() {
+                ctx.save();
+                ctx.globalAlpha = this.opacity;
+                
+                // Tissue glow effect - red when depleted
+                const glowColor = this.depleted ? '#ff0000' : this.color;
+                const glowGradient = ctx.createRadialGradient(
+                    this.x + this.width/2, 
+                    this.y + this.height/2, 
+                    0, 
+                    this.x + this.width/2, 
+                    this.y + this.height/2, 
+                    Math.max(this.width, this.height)
+                );
+                glowGradient.addColorStop(0, glowColor + '20');
+                glowGradient.addColorStop(1, 'transparent');
+                ctx.fillStyle = glowGradient;
+                ctx.fillRect(this.x - 50, this.y - 50, this.width + 100, this.height + 100);
+                
+                // Modern glass morphism effect
+                ctx.fillStyle = this.color + '10';
+                ctx.strokeStyle = this.depleted ? '#ff000060' : this.color + '60';
+                ctx.lineWidth = this.depleted ? 3 : 2;
+                
+                // Draw shape based on organ type
+                if (this.name === 'Spleen') {
+                    this.drawSpleen();
+                } else {
+                    this.drawLymphNode();
+                }
+                
+                // Modern label with backdrop
+                ctx.save();
+                const labelBg = this.depleted ? 'rgba(255, 0, 0, 0.2)' : 'rgba(0, 0, 0, 0.5)';
+                ctx.fillStyle = labelBg;
+                ctx.beginPath();
+                ctx.roundRect(this.x + this.width/2 - 70, this.y - 50, 140, 35, 17);
+                ctx.fill();
+                
+                ctx.fillStyle = this.depleted ? '#ff6666' : '#ffffff';
+                ctx.font = '700 20px Inter';
+                ctx.textAlign = 'center';
+                ctx.fillText(this.name.toUpperCase(), this.x + this.width/2, this.y - 25);
+                
+                // Show cell count
+                if (this.bcells.length > 0) {
+                    ctx.font = '400 14px Inter';
+                    ctx.fillStyle = 'rgba(255, 255, 255, 0.6)';
+                    ctx.fillText(`${this.bcells.length} B cells`, this.x + this.width/2, this.y - 5);
+                } else if (this.depleted) {
+                    ctx.font = '600 14px Inter';
+                    ctx.fillStyle = '#ff6666';
+                    ctx.fillText('DEPLETED', this.x + this.width/2, this.y - 5);
+                }
+                ctx.restore();
+                
+                // Draw B cells with depth sorting
+                this.bcells.sort((a, b) => a.y - b.y).forEach(bcell => bcell.draw());
+                
+                ctx.restore();
+            }
+
+            drawSpleen() {
+                ctx.beginPath();
+                ctx.moveTo(this.x + 20, this.y + this.height/2);
+                ctx.bezierCurveTo(
+                    this.x + 20, this.y,
+                    this.x + this.width - 20, this.y,
+                    this.x + this.width - 20, this.y + this.height/2
+                );
+                ctx.bezierCurveTo(
+                    this.x + this.width - 20, this.y + this.height,
+                    this.x + 20, this.y + this.height,
+                    this.x + 20, this.y + this.height/2
+                );
+                ctx.fill();
+                ctx.stroke();
+                
+                // Internal structure lines
+                ctx.strokeStyle = this.color + '20';
+                ctx.lineWidth = 1;
+                for (let i = 1; i < 4; i++) {
+                    ctx.beginPath();
+                    ctx.moveTo(this.x + 30, this.y + (this.height / 4) * i);
+                    ctx.lineTo(this.x + this.width - 30, this.y + (this.height / 4) * i);
+                    ctx.stroke();
+                }
+            }
+
+            drawLymphNode() {
+                ctx.beginPath();
+                ctx.ellipse(this.x + this.width/2, this.y + this.height/2, this.width/2 - 10, this.height/2 - 10, 0, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.stroke();
+                
+                // Internal compartments
+                ctx.strokeStyle = this.color + '20';
+                ctx.lineWidth = 1;
+                ctx.beginPath();
+                ctx.ellipse(this.x + this.width/2, this.y + this.height/2, this.width/3, this.height/3, 0, 0, Math.PI * 2);
+                ctx.stroke();
+            }
+
+            addBcells(count, autoreactive = false) {
+                for (let i = 0; i < count; i++) {
+                    const angle = Math.random() * Math.PI * 2;
+                    const r = Math.random() * Math.min(this.width, this.height) * 0.35;
+                    const x = this.x + this.width/2 + Math.cos(angle) * r;
+                    const y = this.y + this.height/2 + Math.sin(angle) * r;
+                    const color = autoreactive ? colors.bcellAuto : colors.bcell;
+                    const bcell = new Particle(x, y, 18, color);
+                    this.bcells.push(bcell);
+                }
+                this.depleted = false;
+            }
+
+            depleteBcells(rate = 0.03) {
+                this.bcells.forEach(bcell => {
+                    if (!bcell.dyingAnimation && Math.random() < rate) {
+                        bcell.startDying();
+                        stats.bcellsKilled++;
+                    }
+                });
+                
+                // Remove dead cells
+                this.bcells = this.bcells.filter(bcell => bcell.alive);
+                
+                // Mark as depleted when empty
+                if (this.bcells.length === 0) {
+                    this.depleted = true;
+                }
+            }
+
+            update() {
+                this.pulse = Math.sin(Date.now() * 0.002) * 5;
+                this.bcells.forEach(bcell => bcell.update());
+                // Remove dead cells
+                this.bcells = this.bcells.filter(bcell => bcell.alive);
+            }
+        }
+
+        // Initialize elements
+        let lnps = [];
+        let tcells = [];
+        let bcellsBlood = [];
+        let engineeredTcells = [];
+        let spleen, lymphNode1, lymphNode2;
+
+        function initElements() {
+            // Reset stats
+            stats = { bcellsKilled: 0, tcellsEngineered: 0 };
+            particleEffects = [];
+            
+            // LNPs with staggered positioning
+            lnps = [
+                new Particle(120, 350, 45, colors.primary, 'lnp'),
+                new Particle(120, 450, 45, colors.primary, 'lnp'),
+                new Particle(120, 550, 45, colors.primary, 'lnp')
+            ];
+
+            // T cells
+            tcells = [
+                new Particle(400, 320, 35, colors.tcell),
+                new Particle(450, 400, 35, colors.tcell),
+                new Particle(400, 480, 35, colors.tcell),
+                new Particle(450, 560, 35, colors.tcell)
+            ];
+
+            // B cells in blood
+            bcellsBlood = [
+                new Particle(800, 300, 28, colors.bcell),
+                new Particle(850, 350, 28, colors.bcellAuto),
+                new Particle(900, 400, 28, colors.bcell),
+                new Particle(850, 450, 28, colors.bcellAuto),
+                new Particle(900, 500, 28, colors.bcell),
+                new Particle(850, 550, 28, colors.bcellAuto)
+            ];
+
+            engineeredTcells = [];
+
+            // Tissues with modern styling
+            spleen = new Tissue(1200, 200, 200, 140, 'Spleen', colors.warning);
+            lymphNode1 = new Tissue(1200, 400, 140, 100, 'Lymph Node', colors.secondary);
+            lymphNode2 = new Tissue(1380, 520, 140, 100, 'Lymph Node', colors.secondary);
+
+            // Add B cells to tissues
+            spleen.addBcells(18, true);
+            spleen.addBcells(12, false);
+            lymphNode1.addBcells(10, true);
+            lymphNode1.addBcells(8, false);
+            lymphNode2.addBcells(10, true);
+            lymphNode2.addBcells(8, false);
+        }
+
+        // Modern background with gradient mesh
+        function drawBackground() {
+            // Base gradient
+            const gradient = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
+            gradient.addColorStop(0, colors.background);
+            gradient.addColorStop(0.5, colors.backgroundLight);
+            gradient.addColorStop(1, colors.background);
+            ctx.fillStyle = gradient;
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            // Animated grid pattern
+            ctx.strokeStyle = 'rgba(255, 255, 255, 0.02)';
+            ctx.lineWidth = 1;
+            const gridSize = 50;
+            const offset = (Date.now() * 0.01) % gridSize;
+            
+            for (let x = -gridSize; x < canvas.width + gridSize; x += gridSize) {
+                ctx.beginPath();
+                ctx.moveTo(x + offset, 0);
+                ctx.lineTo(x + offset, canvas.height);
+                ctx.stroke();
+            }
+            
+            for (let y = -gridSize; y < canvas.height + gridSize; y += gridSize) {
+                ctx.beginPath();
+                ctx.moveTo(0, y + offset);
+                ctx.lineTo(canvas.width, y + offset);
+                ctx.stroke();
+            }
+        }
+
+        // Modern blood vessel visualization
+        function drawBloodVessel() {
+            ctx.save();
+            
+            // Vessel gradient
+            const vesselGradient = ctx.createLinearGradient(100, canvas.height/2 - 100, 1000, canvas.height/2 + 100);
+            vesselGradient.addColorStop(0, 'rgba(220, 53, 69, 0.1)');
+            vesselGradient.addColorStop(0.5, 'rgba(220, 53, 69, 0.2)');
+            vesselGradient.addColorStop(1, 'rgba(220, 53, 69, 0.1)');
+            
+            ctx.fillStyle = vesselGradient;
+            ctx.beginPath();
+            ctx.moveTo(100, canvas.height/2 - 150);
+            ctx.bezierCurveTo(300, canvas.height/2 - 160, 700, canvas.height/2 - 140, 1000, canvas.height/2 - 150);
+            ctx.lineTo(1000, canvas.height/2 + 150);
+            ctx.bezierCurveTo(700, canvas.height/2 + 140, 300, canvas.height/2 + 160, 100, canvas.height/2 + 150);
+            ctx.closePath();
+            ctx.fill();
+            
+            // Vessel walls
+            ctx.strokeStyle = 'rgba(220, 53, 69, 0.3)';
+            ctx.lineWidth = 3;
+            ctx.stroke();
+            
+            // Flow lines
+            ctx.strokeStyle = 'rgba(255, 255, 255, 0.05)';
+            ctx.lineWidth = 1;
+            for (let i = 0; i < 5; i++) {
+                ctx.beginPath();
+                const offset = (Date.now() * 0.05 + i * 100) % 1000;
+                ctx.moveTo(100 + offset, canvas.height/2 - 50 + i * 25);
+                ctx.lineTo(200 + offset, canvas.height/2 - 50 + i * 25);
+                ctx.stroke();
+            }
+            
+            // Label
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.3)';
+            ctx.font = '600 24px Inter';
+            ctx.textAlign = 'center';
+            ctx.letterSpacing = '2px';
+            ctx.fillText('BLOODSTREAM', 550, 160);
+            
+            ctx.restore();
+        }
+
+        // Modern text rendering
+        function drawText(text, x, y, size = 48, color = '#fff', weight = '700') {
+            ctx.save();
+            ctx.font = `${weight} ${size}px Inter`;
+            ctx.fillStyle = color;
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.letterSpacing = '1px';
+            
+            // Text shadow for depth
+            ctx.shadowColor = 'rgba(0, 0, 0, 0.5)';
+            ctx.shadowBlur = 20;
+            ctx.shadowOffsetY = 2;
+            
+            ctx.fillText(text, x, y);
+            ctx.restore();
+        }
+
+        // Modern progress indicator
+        function drawProgressBar() {
+            const barWidth = 800;
+            const barHeight = 6;
+            const x = (canvas.width - barWidth) / 2;
+            const y = canvas.height - 60;
+            
+            // Background track
+            ctx.save();
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.1)';
+            ctx.beginPath();
+            ctx.roundRect(x, y, barWidth, barHeight, barHeight/2);
+            ctx.fill();
+            
+            // Progress fill
+            const progress = animationFrame / totalFrames;
+            const progressGradient = ctx.createLinearGradient(x, y, x + barWidth * progress, y);
+            progressGradient.addColorStop(0, colors.primary);
+            progressGradient.addColorStop(1, colors.secondary);
+            
+            ctx.fillStyle = progressGradient;
+            ctx.beginPath();
+            ctx.roundRect(x, y, barWidth * progress, barHeight, barHeight/2);
+            ctx.fill();
+            
+            // Glow effect
+            ctx.shadowColor = colors.primary;
+            ctx.shadowBlur = 10;
+            ctx.fill();
+            
+            ctx.restore();
+        }
+
+        // Stage indicators with animation
+        function drawStageIndicator(stageNum, stageName) {
+            ctx.save();
+            
+            // Stage number badge with animation
+            const badgeX = 100;
+            const badgeY = 100;
+            const scale = 1 + Math.sin(Date.now() * 0.002) * 0.05;
+            
+            ctx.translate(badgeX, badgeY);
+            ctx.scale(scale, scale);
+            
+            // Badge background
+            const badgeGradient = ctx.createLinearGradient(-35, -35, 35, 35);
+            badgeGradient.addColorStop(0, colors.primary);
+            badgeGradient.addColorStop(1, colors.secondary);
+            
+            ctx.fillStyle = badgeGradient;
+            ctx.beginPath();
+            ctx.arc(0, 0, 35, 0, Math.PI * 2);
+            ctx.fill();
+            
+            // Stage number
+            ctx.fillStyle = '#000';
+            ctx.font = '900 32px Inter';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText(stageNum, 0, 0);
+            
+            ctx.restore();
+            
+            // Stage name
+            drawText(stageName, canvas.width / 2, 100, 56, '#fff', '800');
+        }
+
+        // Update and draw particle effects
+        function updateParticleEffects() {
+            particleEffects = particleEffects.filter(p => {
+                p.x += p.vx;
+                p.y += p.vy;
+                p.opacity -= 0.02;
+                p.radius *= 0.95;
+                
+                if (p.opacity > 0) {
+                    p.draw();
+                    return true;
+                }
+                return false;
+            });
+        }
+
+        // Animation stages with modern design
+        function stage1(localFrame) {
+            drawStageIndicator('1', 'LNP ENGINEERING OF T CELLS');
+            
+            drawBloodVessel();
+            
+            // Subtitle
+            drawText('Targeted delivery of CAR-encoding mRNA', canvas.width / 2, 160, 24, 'rgba(255, 255, 255, 0.6)', '400');
+            
+            // Animate LNPs
+            lnps.forEach((lnp, i) => {
+                if (localFrame > 30 + i * 10) {
+                    lnp.targetX = tcells[i] ? tcells[i].x - 50 : lnp.x + 250;
+                    lnp.targetY = tcells[i] ? tcells[i].y : lnp.y;
+                }
+                lnp.update();
+                lnp.draw();
+            });
+
+            // T cells transformation
+            tcells.forEach((tcell, i) => {
+                tcell.update();
+                tcell.draw();
+                
+                if (lnps[i]) {
+                    const distance = Math.hypot(lnps[i].x - tcell.x, lnps[i].y - tcell.y);
+                    if (distance < 100 && localFrame > 120) {
+                        // Transformation effect
+                        if (!tcell.engineered && distance < 80) {
+                            tcell.engineered = true;
+                            tcell.color = colors.accent;
+                            tcell.radius = 40;
+                            stats.tcellsEngineered++;
+                            
+                            // Transformation burst effect
+                            for (let j = 0; j < 20; j++) {
+                                const angle = (j / 20) * Math.PI * 2;
+                                const particle = new Particle(
+                                    tcell.x + Math.cos(angle) * 20,
+                                    tcell.y + Math.sin(angle) * 20,
+                                    3,
+                                    colors.accent,
+                                    'effect'
+                                );
+                                particle.vx = Math.cos(angle) * 5;
+                                particle.vy = Math.sin(angle) * 5;
+                                particleEffects.push(particle);
+                            }
+                        }
+                    }
+                }
+            });
+
+            // Modern legend
+            drawLegend(['tLNP', 'T Cell', 'CAR-T Cell'], [colors.primary, colors.tcell, colors.accent]);
+            
+            // Stats display
+            if (stats.tcellsEngineered > 0) {
+                ctx.save();
+                ctx.fillStyle = 'rgba(0, 255, 136, 0.2)';
+                ctx.beginPath();
+                ctx.roundRect(canvas.width - 250, 200, 200, 60, 10);
+                ctx.fill();
+                
+                ctx.fillStyle = colors.primary;
+                ctx.font = '600 18px Inter';
+                ctx.textAlign = 'center';
+                ctx.fillText('ENGINEERED', canvas.width - 150, 220);
+                ctx.font = '900 24px Inter';
+                ctx.fillText(`${stats.tcellsEngineered} CAR-T CELLS`, canvas.width - 150, 245);
+                ctx.restore();
+            }
+        }
+
+        function stage2(localFrame) {
+            drawStageIndicator('2', 'CAR-T CELLS ELIMINATE B CELLS');
+            
+            drawBloodVessel();
+            
+            drawText('Targeted killing in the bloodstream', canvas.width / 2, 160, 24, 'rgba(255, 255, 255, 0.6)', '400');
+            
+            // CAR-T cells hunt B cells
+            tcells.forEach((tcell, i) => {
+                if (tcell.engineered) {
+                    // Find nearest B cell
+                    let nearestBcell = null;
+                    let minDistance = Infinity;
+                    
+                    bcellsBlood.forEach(bcell => {
+                        if (bcell.alive && !bcell.dyingAnimation) {
+                            const dist = Math.hypot(tcell.x - bcell.x, tcell.y - bcell.y);
+                            if (dist < minDistance) {
+                                minDistance = dist;
+                                nearestBcell = bcell;
+                            }
+                        }
+                    });
+                    
+                    if (nearestBcell) {
+                        tcell.targetX = nearestBcell.x;
+                        tcell.targetY = nearestBcell.y;
+                    } else {
+                        // Patrol behavior when no targets
+                        tcell.targetX = 600 + Math.sin(Date.now() * 0.001 + i) * 200;
+                        tcell.targetY = canvas.height/2 + Math.cos(Date.now() * 0.001 + i) * 100;
+                    }
+                }
+                tcell.update();
+                tcell.draw();
+            });
+
+            // B cells with elimination effects
+            bcellsBlood.forEach((bcell, index) => {
+                bcell.update();
+                if (bcell.alive) {
+                    bcell.draw();
+                }
+                
+                tcells.forEach(tcell => {
+                    if (tcell.engineered && bcell.alive && !bcell.dyingAnimation) {
+                        const distance = Math.hypot(tcell.x - bcell.x, tcell.y - bcell.y);
+                        if (distance < 80) {
+                            // Start dying animation
+                            bcell.startDying();
+                            stats.bcellsKilled++;
+                            
+                            // Attack visualization
+                            ctx.save();
+                            ctx.strokeStyle = colors.accent;
+                            ctx.lineWidth = 3;
+                            ctx.globalAlpha = 0.8;
+                            ctx.setLineDash([5, 5]);
+                            ctx.beginPath();
+                            ctx.moveTo(tcell.x, tcell.y);
+                            ctx.lineTo(bcell.x, bcell.y);
+                            ctx.stroke();
+                            ctx.setLineDash([]);
+                            ctx.restore();
+                        }
+                    }
+                });
+            });
+
+            // Remove dead cells
+            bcellsBlood = bcellsBlood.filter(bcell => bcell.alive);
+
+            drawLegend(['Normal B Cell', 'Autoreactive B Cell'], [colors.bcell, colors.bcellAuto]);
+            
+            // Kill counter
+            if (stats.bcellsKilled > 0) {
+                ctx.save();
+                ctx.fillStyle = 'rgba(255, 51, 102, 0.2)';
+                ctx.beginPath();
+                ctx.roundRect(canvas.width - 250, 200, 200, 60, 10);
+                ctx.fill();
+                
+                ctx.fillStyle = colors.accent;
+                ctx.font = '600 18px Inter';
+                ctx.textAlign = 'center';
+                ctx.fillText('ELIMINATED', canvas.width - 150, 220);
+                ctx.font = '900 24px Inter';
+                ctx.fillText(`${stats.bcellsKilled} B CELLS`, canvas.width - 150, 245);
+                ctx.restore();
+            }
+        }
+
+        function stage3(localFrame) {
+            drawStageIndicator('3', 'TISSUE B CELL DEPLETION');
+            
+            drawText('Deep penetration into lymphoid organs', canvas.width / 2, 160, 24, 'rgba(255, 255, 255, 0.6)', '400');
+            
+            // Update and draw tissues
+            spleen.update();
+            lymphNode1.update();
+            lymphNode2.update();
+            
+            spleen.draw();
+            lymphNode1.draw();
+            lymphNode2.draw();
+            
+            // CAR-T cells migrate to tissues
+            if (localFrame < 180) {
+                tcells.forEach((tcell, i) => {
+                    if (tcell.engineered) {
+                        if (i === 0) {
+                            tcell.targetX = spleen.x + spleen.width/2;
+                            tcell.targetY = spleen.y + spleen.height/2;
+                        } else if (i === 1) {
+                            tcell.targetX = lymphNode1.x + lymphNode1.width/2;
+                            tcell.targetY = lymphNode1.y + lymphNode1.height/2;
+                        } else {
+                            tcell.targetX = lymphNode2.x + lymphNode2.width/2;
+                            tcell.targetY = lymphNode2.y + lymphNode2.height/2;
+                        }
+                    }
+                    tcell.update();
+                    tcell.draw();
+                });
+            }
+            
+            // Deplete B cells in tissues
+            if (localFrame > 60) {
+                spleen.depleteBcells();
+                lymphNode1.depleteBcells();
+                lymphNode2.depleteBcells();
+            }
+            
+            // Calculate total B cells remaining
+            const totalBcells = spleen.bcells.length + lymphNode1.bcells.length + lymphNode2.bcells.length;
+            const initialBcells = 54; // Initial total
+            const depletionPercent = Math.round((1 - totalBcells / initialBcells) * 100);
+            
+            // Depletion counter with modern styling
+            ctx.save();
+            
+            // Counter background
+            const counterColor = depletionPercent === 100 ? 'rgba(255, 0, 0, 0.3)' : 'rgba(0, 0, 0, 0.5)';
+            ctx.fillStyle = counterColor;
+            ctx.beginPath();
+            ctx.roundRect(canvas.width/2 - 150, 880, 300, 100, 20);
+            ctx.fill();
+            
+            // Counter text
+            drawText(`DEPLETION PROGRESS`, canvas.width / 2, 910, 20, 'rgba(255, 255, 255, 0.6)', '600');
+            
+            const percentColor = depletionPercent === 100 ? '#ff0000' : colors.warning;
+            drawText(`${depletionPercent}%`, canvas.width / 2, 945, 56, percentColor, '900');
+            
+            if (depletionPercent === 100) {
+                ctx.font = '600 16px Inter';
+                ctx.fillStyle = '#ff6666';
+                ctx.textAlign = 'center';
+                ctx.fillText('COMPLETE DEPLETION', canvas.width / 2, 975);
+            }
+            
+            ctx.restore();
+        }
+
+        function stage4(localFrame) {
+            drawStageIndicator('4', 'IMMUNE SYSTEM RESET');
+            
+            drawBloodVessel();
+            
+            drawText('CAR-T cells disappear • Naive B cells emerge', canvas.width / 2, 160, 24, 'rgba(255, 255, 255, 0.6)', '400');
+            
+            // Fade out CAR-T cells
+            if (localFrame < 120) {
+                tcells.forEach(tcell => {
+                    if (tcell.engineered) {
+                        tcell.opacity = Math.max(0, tcell.opacity - 0.015);
+                        tcell.radius = Math.max(0.1, tcell.radius * 0.99);
+                        tcell.update();
+                        tcell.draw();
+                    }
+                });
+            }
+            
+            // Draw tissues
+            spleen.update();
+            lymphNode1.update();
+            lymphNode2.update();
+            
+            spleen.draw();
+            lymphNode1.draw();
+            lymphNode2.draw();
+            
+            // Emergence of new naive B cells
+            if (localFrame > 120) {
+                // Blood B cells with staggered appearance
+                const bloodPositions = [
+                    {x: 300, y: 350}, {x: 400, y: 400}, {x: 500, y: 450},
+                    {x: 600, y: 350}, {x: 700, y: 400}, {x: 800, y: 450},
+                    {x: 350, y: 500}, {x: 450, y: 550}, {x: 550, y: 500}
+                ];
+                
+                bloodPositions.forEach((pos, index) => {
+                    if (localFrame > 120 + index * 15) {
+                        const progress = (localFrame - 120 - index * 15) / 30;
+                        if (progress > 0 && progress <= 1) {
+                            ctx.save();
+                            ctx.globalAlpha = progress;
+                            const bcell = new Particle(pos.x, pos.y, 28, colors.success);
+                            bcell.pulse = Math.sin(Date.now() * 0.01 + index) * 3;
+                            
+                            // Emergence effect
+                            const scale = 0.5 + progress * 0.5;
+                            ctx.translate(bcell.x, bcell.y);
+                            ctx.scale(scale, scale);
+                            ctx.translate(-bcell.x, -bcell.y);
+                            
+                            bcell.draw();
+                            ctx.restore();
+                        }
+                    }
+                });
+                
+                // Repopulate tissues with animation
+                if (localFrame === 180) {
+                    spleen.bcells = [];
+                    lymphNode1.bcells = [];
+                    lymphNode2.bcells = [];
+                    
+                    spleen.addBcells(10, false);
+                    lymphNode1.addBcells(6, false);
+                    lymphNode2.addBcells(6, false);
+                    
+                    // Mark tissues as no longer depleted
+                    spleen.depleted = false;
+                    lymphNode1.depleted = false;
+                    lymphNode2.depleted = false;
+                }
+                
+                // Change tissue B cells to green
+                [spleen, lymphNode1, lymphNode2].forEach(tissue => {
+                    tissue.bcells.forEach(bcell => {
+                        bcell.color = colors.success;
+                    });
+                });
+            }
+            
+            // Success message with animation
+            if (localFrame > 240) {
+                const scale = 1 + Math.sin(Date.now() * 0.003) * 0.05;
+                
+                ctx.save();
+                ctx.translate(canvas.width/2, 900);
+                ctx.scale(scale, scale);
+                
+                // Success badge
+                ctx.fillStyle = 'rgba(0, 255, 136, 0.2)';
+                ctx.beginPath();
+                ctx.roundRect(-200, -50, 400, 100, 25);
+                ctx.fill();
+                
+                ctx.strokeStyle = colors.success;
+                ctx.lineWidth = 2;
+                ctx.stroke();
+                
+                ctx.fillStyle = colors.success;
+                ctx.font = '900 36px Inter';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillText('✓ RESET COMPLETE', 0, 0);
+                
+                ctx.restore();
+            }
+            
+            drawLegend(['Naive B Cell (Healthy)', 'CAR-T Cell (Transient)'], [colors.success, colors.accent + '40']);
+        }
+
+        // Modern legend
+        function drawLegend(labels, colors) {
+            ctx.save();
+            
+            const startY = 650;
+            const spacing = 35;
+            
+            labels.forEach((label, i) => {
+                // Color indicator with glow
+                ctx.shadowBlur = 10;
+                ctx.shadowColor = colors[i];
+                ctx.fillStyle = colors[i];
+                ctx.beginPath();
+                ctx.arc(120, startY + i * spacing, 12, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.shadowBlur = 0;
+                
+                // Label
+                ctx.fillStyle = 'rgba(255, 255, 255, 0.8)';
+                ctx.font = '500 18px Inter';
+                ctx.textAlign = 'left';
+                ctx.fillText(label, 145, startY + i * spacing + 5);
+            });
+            
+            ctx.restore();
+        }
+
+        // Main animation loop
+        function animate() {
+            drawBackground();
+            
+            // Main title with gradient and animation
+            ctx.save();
+            const titleScale = 1 + Math.sin(Date.now() * 0.001) * 0.02;
+            ctx.translate(canvas.width / 2, 40);
+            ctx.scale(titleScale, 1);
+            
+            const titleGradient = ctx.createLinearGradient(-400, 0, 400, 0);
+            titleGradient.addColorStop(0, colors.primary);
+            titleGradient.addColorStop(0.5, '#fff');
+            titleGradient.addColorStop(1, colors.secondary);
+            ctx.fillStyle = titleGradient;
+            ctx.font = '900 72px Inter';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.letterSpacing = '2px';
+            ctx.fillText('IN VIVO CAR-T THERAPY', 0, 0);
+            ctx.restore();
+            
+            // Determine current stage
+            const currentStage = Math.floor(animationFrame / stageFrames) + 1;
+            const stageFrame = animationFrame % stageFrames;
+            
+            switch(currentStage) {
+                case 1: stage1(stageFrame); break;
+                case 2: stage2(stageFrame); break;
+                case 3: stage3(stageFrame); break;
+                case 4: stage4(stageFrame); break;
+            }
+            
+            // Update particle effects
+            updateParticleEffects();
+            
+            drawProgressBar();
+            
+            // Capstan branding with subtle animation
+            ctx.save();
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.3)';
+            ctx.font = '600 16px Inter';
+            ctx.textAlign = 'right';
+            ctx.fillText('CAPSTAN THERAPEUTICS', canvas.width - 50, canvas.height - 90);
+            ctx.restore();
+            
+            if (isPlaying) {
+                animationFrame++;
+                if (animationFrame >= totalFrames) {
+                    if (isRecording) {
+                        stopRecording();
+                    } else {
+                        animationFrame = 0;
+                        initElements();
+                    }
+                }
+                requestAnimationFrame(animate);
+            }
+        }
+
+        // Recording functions
+        function startRecording() {
+            recordedChunks = [];
+            const stream = canvas.captureStream(fps);
+            
+            mediaRecorder = new MediaRecorder(stream, {
+                mimeType: 'video/webm;codecs=vp9',
+                videoBitsPerSecond: 10000000 // Higher bitrate for better quality
+            });
+            
+            mediaRecorder.ondataavailable = (event) => {
+                if (event.data.size > 0) {
+                    recordedChunks.push(event.data);
+                }
+            };
+            
+            mediaRecorder.onstop = () => {
+                const blob = new Blob(recordedChunks, { type: 'video/webm' });
+                const url = URL.createObjectURL(blob);
+                downloadLink.href = url;
+                downloadLink.style.display = 'inline-block';
+                recordBtn.classList.remove('recording');
+                recordBtn.textContent = 'Record Video';
+                isRecording = false;
+            };
+            
+            mediaRecorder.start();
+            isRecording = true;
+            recordBtn.classList.add('recording');
+            recordBtn.textContent = 'Recording...';
+        }
+
+        function stopRecording() {
+            if (mediaRecorder && mediaRecorder.state !== 'inactive') {
+                mediaRecorder.stop();
+                isPlaying = false;
+                playBtn.textContent = 'Play Animation';
+            }
+        }
+
+        // Event listeners
+        playBtn.addEventListener('click', () => {
+            isPlaying = !isPlaying;
+            if (isPlaying) {
+                playBtn.textContent = 'Pause';
+                animate();
+            } else {
+                playBtn.textContent = 'Play Animation';
+            }
+        });
+
+        recordBtn.addEventListener('click', () => {
+            if (!isRecording) {
+                animationFrame = 0;
+                initElements();
+                startRecording();
+                isPlaying = true;
+                playBtn.textContent = 'Pause';
+                animate();
+            } else {
+                stopRecording();
+            }
+        });
+
+        resetBtn.addEventListener('click', () => {
+            animationFrame = 0;
+            isPlaying = false;
+            playBtn.textContent = 'Play Animation';
+            initElements();
+            drawBackground();
+            
+            // Welcome screen with animation
+            const gradient = ctx.createLinearGradient(0, canvas.height/2 - 100, canvas.width, canvas.height/2 + 100);
+            gradient.addColorStop(0, colors.primary);
+            gradient.addColorStop(0.5, '#fff');
+            gradient.addColorStop(1, colors.secondary);
+            
+            ctx.fillStyle = gradient;
+            ctx.font = '900 86px Inter';
+            ctx.textAlign = 'center';
+            ctx.fillText('IN VIVO CAR-T', canvas.width / 2, canvas.height / 2 - 50);
+            
+            ctx.font = '300 36px Inter';
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.8)';
+            ctx.fillText('Immune System Reset', canvas.width / 2, canvas.height / 2 + 20);
+            
+            ctx.font = '500 24px Inter';
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.5)';
+            ctx.fillText('Click Play to Begin', canvas.width / 2, canvas.height / 2 + 80);
+            
+            // Draw preview elements
+            ctx.save();
+            ctx.globalAlpha = 0.3;
+            
+            // Preview CAR-T cell
+            const previewCART = new Particle(300, 300, 40, colors.accent);
+            previewCART.engineered = true;
+            previewCART.draw();
+            
+            // Preview B cells
+            new Particle(1600, 300, 25, colors.bcell).draw();
+            new Particle(1650, 350, 25, colors.bcellAuto).draw();
+            
+            ctx.restore();
+        });
+
+        // Initialize
+        initElements();
+        resetBtn.click();
+    </script>
+</body>
+</html>
