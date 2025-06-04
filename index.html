@@ -190,10 +190,10 @@
         let recordedChunks = [];
         let particleEffects = [];
 
-        // Animation settings - increased stage 4 duration
+        // Animation settings
         const fps = 60;
-        const totalFrames = fps * 26; // 26 seconds total
-        const stageFrames = [fps * 6, fps * 6, fps * 6, fps * 8]; // Stage 4 is now 8 seconds
+        const totalFrames = fps * 24;
+        const stageFrames = totalFrames / 4;
 
         // Modern color palette
         const colors = {
@@ -207,14 +207,6 @@
             bcellAuto: '#f72585',
             background: '#0a0e27',
             backgroundLight: '#1a1f3a'
-        };
-
-        // Blood vessel boundaries
-        const bloodVessel = {
-            minY: 300,
-            maxY: 600,
-            minX: 100,
-            maxX: 1000
         };
 
         // Statistics tracking
@@ -246,8 +238,6 @@
                 this.alive = true;
                 this.dyingAnimation = false;
                 this.deathTimer = 0;
-                this.inBloodstream = false;
-                this.flowSpeed = 0.5 + Math.random() * 0.5;
             }
 
             draw() {
@@ -431,15 +421,6 @@
             }
 
             update() {
-                // Blood flow effect
-                if (this.inBloodstream && !this.engineered) {
-                    this.x += this.flowSpeed;
-                    // Loop back around
-                    if (this.x > bloodVessel.maxX + 50) {
-                        this.x = bloodVessel.minX - 50;
-                    }
-                }
-                
                 // Smooth movement
                 const dx = this.targetX - this.x;
                 const dy = this.targetY - this.y;
@@ -450,11 +431,6 @@
                 if (!this.dyingAnimation) {
                     this.x += (Math.random() - 0.5) * 0.5;
                     this.y += (Math.random() - 0.5) * 0.5;
-                }
-                
-                // Keep cells within bloodstream bounds if flagged
-                if (this.inBloodstream) {
-                    this.y = Math.max(bloodVessel.minY, Math.min(bloodVessel.maxY, this.y));
                 }
                 
                 // Pulsing effect
@@ -515,7 +491,6 @@
                 this.opacity = 0.9;
                 this.pulse = 0;
                 this.depleted = false;
-                this.carTCells = [];
             }
 
             draw() {
@@ -577,9 +552,6 @@
                 // Draw B cells with depth sorting
                 this.bcells.sort((a, b) => a.y - b.y).forEach(bcell => bcell.draw());
                 
-                // Draw CAR-T cells in tissue
-                this.carTCells.forEach(cart => cart.draw());
-                
                 ctx.restore();
             }
 
@@ -638,15 +610,12 @@
             }
 
             depleteBcells(rate = 0.03) {
-                // Kill B cells if CAR-T cells are present
-                if (this.carTCells.length > 0) {
-                    this.bcells.forEach(bcell => {
-                        if (!bcell.dyingAnimation && Math.random() < rate * this.carTCells.length) {
-                            bcell.startDying();
-                            stats.bcellsKilled++;
-                        }
-                    });
-                }
+                this.bcells.forEach(bcell => {
+                    if (!bcell.dyingAnimation && Math.random() < rate) {
+                        bcell.startDying();
+                        stats.bcellsKilled++;
+                    }
+                });
                 
                 // Remove dead cells
                 this.bcells = this.bcells.filter(bcell => bcell.alive);
@@ -660,7 +629,6 @@
             update() {
                 this.pulse = Math.sin(Date.now() * 0.002) * 5;
                 this.bcells.forEach(bcell => bcell.update());
-                this.carTCells.forEach(cart => cart.update());
                 // Remove dead cells
                 this.bcells = this.bcells.filter(bcell => bcell.alive);
             }
@@ -678,33 +646,30 @@
             stats = { bcellsKilled: 0, tcellsEngineered: 0 };
             particleEffects = [];
             
-            // LNPs with staggered positioning - in bloodstream
+            // LNPs with staggered positioning
             lnps = [
-                new Particle(120, 380, 45, colors.primary, 'lnp'),
+                new Particle(120, 350, 45, colors.primary, 'lnp'),
                 new Particle(120, 450, 45, colors.primary, 'lnp'),
-                new Particle(120, 520, 45, colors.primary, 'lnp')
+                new Particle(120, 550, 45, colors.primary, 'lnp')
             ];
-            lnps.forEach(lnp => lnp.inBloodstream = true);
 
-            // T cells in bloodstream
+            // T cells
             tcells = [
-                new Particle(400, 380, 35, colors.tcell),
-                new Particle(450, 430, 35, colors.tcell),
+                new Particle(400, 320, 35, colors.tcell),
+                new Particle(450, 400, 35, colors.tcell),
                 new Particle(400, 480, 35, colors.tcell),
-                new Particle(450, 530, 35, colors.tcell)
+                new Particle(450, 560, 35, colors.tcell)
             ];
-            tcells.forEach(tcell => tcell.inBloodstream = true);
 
             // B cells in blood
-            bcellsBlood = [];
-            for (let i = 0; i < 8; i++) {
-                const x = 600 + i * 80;
-                const y = bloodVessel.minY + 50 + Math.random() * (bloodVessel.maxY - bloodVessel.minY - 100);
-                const isAuto = i % 2 === 1;
-                const bcell = new Particle(x, y, 28, isAuto ? colors.bcellAuto : colors.bcell);
-                bcell.inBloodstream = true;
-                bcellsBlood.push(bcell);
-            }
+            bcellsBlood = [
+                new Particle(800, 300, 28, colors.bcell),
+                new Particle(850, 350, 28, colors.bcellAuto),
+                new Particle(900, 400, 28, colors.bcell),
+                new Particle(850, 450, 28, colors.bcellAuto),
+                new Particle(900, 500, 28, colors.bcell),
+                new Particle(850, 550, 28, colors.bcellAuto)
+            ];
 
             engineeredTcells = [];
 
@@ -758,17 +723,17 @@
             ctx.save();
             
             // Vessel gradient
-            const vesselGradient = ctx.createLinearGradient(100, bloodVessel.minY, 1000, bloodVessel.maxY);
+            const vesselGradient = ctx.createLinearGradient(100, canvas.height/2 - 100, 1000, canvas.height/2 + 100);
             vesselGradient.addColorStop(0, 'rgba(220, 53, 69, 0.1)');
             vesselGradient.addColorStop(0.5, 'rgba(220, 53, 69, 0.2)');
             vesselGradient.addColorStop(1, 'rgba(220, 53, 69, 0.1)');
             
             ctx.fillStyle = vesselGradient;
             ctx.beginPath();
-            ctx.moveTo(bloodVessel.minX, bloodVessel.minY);
-            ctx.bezierCurveTo(300, bloodVessel.minY - 20, 700, bloodVessel.minY - 10, bloodVessel.maxX, bloodVessel.minY);
-            ctx.lineTo(bloodVessel.maxX, bloodVessel.maxY);
-            ctx.bezierCurveTo(700, bloodVessel.maxY + 10, 300, bloodVessel.maxY + 20, bloodVessel.minX, bloodVessel.maxY);
+            ctx.moveTo(100, canvas.height/2 - 150);
+            ctx.bezierCurveTo(300, canvas.height/2 - 160, 700, canvas.height/2 - 140, 1000, canvas.height/2 - 150);
+            ctx.lineTo(1000, canvas.height/2 + 150);
+            ctx.bezierCurveTo(700, canvas.height/2 + 140, 300, canvas.height/2 + 160, 100, canvas.height/2 + 150);
             ctx.closePath();
             ctx.fill();
             
@@ -783,9 +748,8 @@
             for (let i = 0; i < 5; i++) {
                 ctx.beginPath();
                 const offset = (Date.now() * 0.05 + i * 100) % 1000;
-                const y = bloodVessel.minY + 50 + i * 50;
-                ctx.moveTo(100 + offset, y);
-                ctx.lineTo(200 + offset, y);
+                ctx.moveTo(100 + offset, canvas.height/2 - 50 + i * 25);
+                ctx.lineTo(200 + offset, canvas.height/2 - 50 + i * 25);
                 ctx.stroke();
             }
             
@@ -794,7 +758,7 @@
             ctx.font = '600 24px Inter';
             ctx.textAlign = 'center';
             ctx.letterSpacing = '2px';
-            ctx.fillText('BLOODSTREAM', 550, 250);
+            ctx.fillText('BLOODSTREAM', 550, 160);
             
             ctx.restore();
         }
@@ -831,20 +795,8 @@
             ctx.roundRect(x, y, barWidth, barHeight, barHeight/2);
             ctx.fill();
             
-            // Calculate actual progress through all stages
-            let totalProgress = 0;
-            let accumulatedFrames = 0;
-            for (let i = 0; i < 4; i++) {
-                if (animationFrame > accumulatedFrames + stageFrames[i]) {
-                    totalProgress += stageFrames[i];
-                } else if (animationFrame > accumulatedFrames) {
-                    totalProgress += animationFrame - accumulatedFrames;
-                    break;
-                }
-                accumulatedFrames += stageFrames[i];
-            }
-            
-            const progress = totalProgress / totalFrames;
+            // Progress fill
+            const progress = animationFrame / totalFrames;
             const progressGradient = ctx.createLinearGradient(x, y, x + barWidth * progress, y);
             progressGradient.addColorStop(0, colors.primary);
             progressGradient.addColorStop(1, colors.secondary);
@@ -966,12 +918,6 @@
                 }
             });
 
-            // Draw B cells flowing in blood
-            bcellsBlood.forEach(bcell => {
-                bcell.update();
-                bcell.draw();
-            });
-
             // Modern legend
             drawLegend(['tLNP', 'T Cell', 'CAR-T Cell'], [colors.primary, colors.tcell, colors.accent]);
             
@@ -994,33 +940,16 @@
         }
 
         function stage2(localFrame) {
-            drawStageIndicator('2', 'SIMULTANEOUS B CELL ELIMINATION');
+            drawStageIndicator('2', 'CAR-T CELLS ELIMINATE B CELLS');
             
             drawBloodVessel();
             
-            drawText('Killing in bloodstream and tissues', canvas.width / 2, 160, 24, 'rgba(255, 255, 255, 0.6)', '400');
+            drawText('Targeted killing in the bloodstream', canvas.width / 2, 160, 24, 'rgba(255, 255, 255, 0.6)', '400');
             
-            // Draw tissues
-            spleen.update();
-            lymphNode1.update();
-            lymphNode2.update();
-            
-            spleen.draw();
-            lymphNode1.draw();
-            lymphNode2.draw();
-            
-            // Move some CAR-T cells to tissues after initial blood killing
-            if (localFrame === 120) {
-                // Send CAR-T cells to tissues
-                if (tcells[0]?.engineered) spleen.carTCells.push(tcells[0]);
-                if (tcells[1]?.engineered) lymphNode1.carTCells.push(tcells[1]);
-                if (tcells[2]?.engineered) lymphNode2.carTCells.push(tcells[2]);
-            }
-            
-            // CAR-T cells hunt B cells in blood
+            // CAR-T cells hunt B cells
             tcells.forEach((tcell, i) => {
-                if (tcell.engineered && (localFrame < 120 || i === 3)) {
-                    // Find nearest B cell in blood
+                if (tcell.engineered) {
+                    // Find nearest B cell
                     let nearestBcell = null;
                     let minDistance = Infinity;
                     
@@ -1040,15 +969,14 @@
                     } else {
                         // Patrol behavior when no targets
                         tcell.targetX = 600 + Math.sin(Date.now() * 0.001 + i) * 200;
-                        tcell.targetY = bloodVessel.minY + 50 + Math.cos(Date.now() * 0.001 + i) * 100;
+                        tcell.targetY = canvas.height/2 + Math.cos(Date.now() * 0.001 + i) * 100;
                     }
-                    
-                    tcell.update();
-                    tcell.draw();
                 }
+                tcell.update();
+                tcell.draw();
             });
 
-            // B cells in blood with elimination effects
+            // B cells with elimination effects
             bcellsBlood.forEach((bcell, index) => {
                 bcell.update();
                 if (bcell.alive) {
@@ -1083,13 +1011,6 @@
             // Remove dead cells
             bcellsBlood = bcellsBlood.filter(bcell => bcell.alive);
 
-            // Simultaneous tissue depletion
-            if (localFrame > 60) {
-                spleen.depleteBcells();
-                lymphNode1.depleteBcells();
-                lymphNode2.depleteBcells();
-            }
-
             drawLegend(['Normal B Cell', 'Autoreactive B Cell'], [colors.bcell, colors.bcellAuto]);
             
             // Kill counter
@@ -1111,19 +1032,9 @@
         }
 
         function stage3(localFrame) {
-            drawStageIndicator('3', 'COMPLETE TISSUE DEPLETION');
+            drawStageIndicator('3', 'TISSUE B CELL DEPLETION');
             
-            drawText('Deep B cell elimination in all compartments', canvas.width / 2, 160, 24, 'rgba(255, 255, 255, 0.6)', '400');
-            
-            drawBloodVessel();
-            
-            // Continue showing any remaining blood cells
-            bcellsBlood.forEach(bcell => {
-                bcell.update();
-                if (bcell.alive) {
-                    bcell.draw();
-                }
-            });
+            drawText('Deep penetration into lymphoid organs', canvas.width / 2, 160, 24, 'rgba(255, 255, 255, 0.6)', '400');
             
             // Update and draw tissues
             spleen.update();
@@ -1134,14 +1045,36 @@
             lymphNode1.draw();
             lymphNode2.draw();
             
-            // Continue depletion
-            spleen.depleteBcells(0.05); // Faster depletion
-            lymphNode1.depleteBcells(0.05);
-            lymphNode2.depleteBcells(0.05);
+            // CAR-T cells migrate to tissues
+            if (localFrame < 180) {
+                tcells.forEach((tcell, i) => {
+                    if (tcell.engineered) {
+                        if (i === 0) {
+                            tcell.targetX = spleen.x + spleen.width/2;
+                            tcell.targetY = spleen.y + spleen.height/2;
+                        } else if (i === 1) {
+                            tcell.targetX = lymphNode1.x + lymphNode1.width/2;
+                            tcell.targetY = lymphNode1.y + lymphNode1.height/2;
+                        } else {
+                            tcell.targetX = lymphNode2.x + lymphNode2.width/2;
+                            tcell.targetY = lymphNode2.y + lymphNode2.height/2;
+                        }
+                    }
+                    tcell.update();
+                    tcell.draw();
+                });
+            }
+            
+            // Deplete B cells in tissues
+            if (localFrame > 60) {
+                spleen.depleteBcells();
+                lymphNode1.depleteBcells();
+                lymphNode2.depleteBcells();
+            }
             
             // Calculate total B cells remaining
-            const totalBcells = spleen.bcells.length + lymphNode1.bcells.length + lymphNode2.bcells.length + bcellsBlood.filter(b => b.alive).length;
-            const initialBcells = 62; // Initial total including blood
+            const totalBcells = spleen.bcells.length + lymphNode1.bcells.length + lymphNode2.bcells.length;
+            const initialBcells = 54; // Initial total
             const depletionPercent = Math.round((1 - totalBcells / initialBcells) * 100);
             
             // Depletion counter with modern styling
@@ -1175,25 +1108,17 @@
             
             drawBloodVessel();
             
-            drawText('CAR-T cells disappear • Naive B cells emerge everywhere', canvas.width / 2, 160, 24, 'rgba(255, 255, 255, 0.6)', '400');
+            drawText('CAR-T cells disappear • Naive B cells emerge', canvas.width / 2, 160, 24, 'rgba(255, 255, 255, 0.6)', '400');
             
             // Fade out CAR-T cells
-            if (localFrame < 100) {
+            if (localFrame < 120) {
                 tcells.forEach(tcell => {
                     if (tcell.engineered) {
-                        tcell.opacity = Math.max(0, tcell.opacity - 0.02);
-                        tcell.radius = Math.max(0.1, tcell.radius * 0.98);
+                        tcell.opacity = Math.max(0, tcell.opacity - 0.015);
+                        tcell.radius = Math.max(0.1, tcell.radius * 0.99);
                         tcell.update();
                         tcell.draw();
                     }
-                });
-                
-                // Also fade CAR-T cells in tissues
-                [spleen, lymphNode1, lymphNode2].forEach(tissue => {
-                    tissue.carTCells.forEach(cart => {
-                        cart.opacity = Math.max(0, cart.opacity - 0.02);
-                        cart.radius = Math.max(0.1, cart.radius * 0.98);
-                    });
                 });
             }
             
@@ -1206,37 +1131,29 @@
             lymphNode1.draw();
             lymphNode2.draw();
             
-            // Emergence of new naive B cells - earlier and more gradual
-            if (localFrame > 80) {
+            // Emergence of new naive B cells
+            if (localFrame > 120) {
                 // Blood B cells with staggered appearance
                 const bloodPositions = [
-                    {x: 200, y: 380}, {x: 300, y: 420}, {x: 400, y: 460},
-                    {x: 500, y: 380}, {x: 600, y: 420}, {x: 700, y: 460},
-                    {x: 250, y: 500}, {x: 350, y: 540}, {x: 450, y: 500},
-                    {x: 550, y: 540}, {x: 650, y: 500}, {x: 750, y: 540},
-                    {x: 800, y: 420}, {x: 850, y: 380}, {x: 900, y: 460}
+                    {x: 300, y: 350}, {x: 400, y: 400}, {x: 500, y: 450},
+                    {x: 600, y: 350}, {x: 700, y: 400}, {x: 800, y: 450},
+                    {x: 350, y: 500}, {x: 450, y: 550}, {x: 550, y: 500}
                 ];
                 
                 bloodPositions.forEach((pos, index) => {
-                    const startFrame = 80 + index * 10; // More gradual appearance
-                    if (localFrame > startFrame) {
-                        const progress = Math.min(1, (localFrame - startFrame) / 40);
-                        if (progress > 0) {
+                    if (localFrame > 120 + index * 15) {
+                        const progress = (localFrame - 120 - index * 15) / 30;
+                        if (progress > 0 && progress <= 1) {
                             ctx.save();
                             ctx.globalAlpha = progress;
                             const bcell = new Particle(pos.x, pos.y, 28, colors.success);
-                            bcell.inBloodstream = true;
                             bcell.pulse = Math.sin(Date.now() * 0.01 + index) * 3;
                             
-                            // Emergence effect with growth animation
-                            const scale = 0.3 + progress * 0.7;
+                            // Emergence effect
+                            const scale = 0.5 + progress * 0.5;
                             ctx.translate(bcell.x, bcell.y);
                             ctx.scale(scale, scale);
                             ctx.translate(-bcell.x, -bcell.y);
-                            
-                            // Glow effect for new cells
-                            ctx.shadowBlur = 20;
-                            ctx.shadowColor = colors.success;
                             
                             bcell.draw();
                             ctx.restore();
@@ -1244,47 +1161,32 @@
                     }
                 });
                 
-                // Repopulate tissues with animation - staggered timing
-                if (localFrame === 140) {
-                    spleen.bcells = [];
-                    spleen.addBcells(5, false);
-                    spleen.depleted = false;
-                }
-                
-                if (localFrame === 160) {
-                    lymphNode1.bcells = [];
-                    lymphNode1.addBcells(4, false);
-                    lymphNode1.depleted = false;
-                }
-                
+                // Repopulate tissues with animation
                 if (localFrame === 180) {
+                    spleen.bcells = [];
+                    lymphNode1.bcells = [];
                     lymphNode2.bcells = [];
-                    lymphNode2.addBcells(4, false);
+                    
+                    spleen.addBcells(10, false);
+                    lymphNode1.addBcells(6, false);
+                    lymphNode2.addBcells(6, false);
+                    
+                    // Mark tissues as no longer depleted
+                    spleen.depleted = false;
+                    lymphNode1.depleted = false;
                     lymphNode2.depleted = false;
                 }
                 
-                if (localFrame === 200) {
-                    spleen.addBcells(5, false);
-                }
-                
-                if (localFrame === 220) {
-                    lymphNode1.addBcells(3, false);
-                    lymphNode2.addBcells(3, false);
-                }
-                
-                // Ensure all new B cells are green
+                // Change tissue B cells to green
                 [spleen, lymphNode1, lymphNode2].forEach(tissue => {
                     tissue.bcells.forEach(bcell => {
                         bcell.color = colors.success;
-                        // Add emergence animation to tissue cells
-                        const tissueProgress = Math.min(1, (localFrame - 140) / 100);
-                        bcell.radius = bcell.baseRadius * (0.5 + tissueProgress * 0.5);
                     });
                 });
             }
             
-            // Success message with animation - appears later
-            if (localFrame > 280) {
+            // Success message with animation
+            if (localFrame > 240) {
                 const scale = 1 + Math.sin(Date.now() * 0.003) * 0.05;
                 
                 ctx.save();
@@ -1308,24 +1210,16 @@
                 ctx.fillText('✓ RESET COMPLETE', 0, 0);
                 
                 ctx.restore();
-                
-                // Additional success text
-                ctx.save();
-                ctx.fillStyle = 'rgba(255, 255, 255, 0.6)';
-                ctx.font = '400 20px Inter';
-                ctx.textAlign = 'center';
-                ctx.fillText('Healthy immune system restored', canvas.width/2, 970);
-                ctx.restore();
             }
             
-            drawLegend(['Naive B Cell (Healthy)', 'CAR-T Cell (Disappearing)'], [colors.success, colors.accent + '40']);
+            drawLegend(['Naive B Cell (Healthy)', 'CAR-T Cell (Transient)'], [colors.success, colors.accent + '40']);
         }
 
         // Modern legend
         function drawLegend(labels, colors) {
             ctx.save();
             
-            const startY = 700;
+            const startY = 650;
             const spacing = 35;
             
             labels.forEach((label, i) => {
@@ -1346,18 +1240,6 @@
             });
             
             ctx.restore();
-        }
-
-        // Get current stage based on frame
-        function getCurrentStage() {
-            let accumulatedFrames = 0;
-            for (let i = 0; i < 4; i++) {
-                if (animationFrame <= accumulatedFrames + stageFrames[i]) {
-                    return { stage: i + 1, localFrame: animationFrame - accumulatedFrames };
-                }
-                accumulatedFrames += stageFrames[i];
-            }
-            return { stage: 4, localFrame: stageFrames[3] };
         }
 
         // Main animation loop
@@ -1383,13 +1265,14 @@
             ctx.restore();
             
             // Determine current stage
-            const { stage, localFrame } = getCurrentStage();
+            const currentStage = Math.floor(animationFrame / stageFrames) + 1;
+            const stageFrame = animationFrame % stageFrames;
             
-            switch(stage) {
-                case 1: stage1(localFrame); break;
-                case 2: stage2(localFrame); break;
-                case 3: stage3(localFrame); break;
-                case 4: stage4(localFrame); break;
+            switch(currentStage) {
+                case 1: stage1(stageFrame); break;
+                case 2: stage2(stageFrame); break;
+                case 3: stage3(stageFrame); break;
+                case 4: stage4(stageFrame); break;
             }
             
             // Update particle effects
@@ -1411,7 +1294,6 @@
                     if (isRecording) {
                         stopRecording();
                     } else {
-                        // Loop animation
                         animationFrame = 0;
                         initElements();
                     }
@@ -1430,4 +1312,105 @@
                 videoBitsPerSecond: 10000000 // Higher bitrate for better quality
             });
             
-            mediaRecorder.ondataavailable = (event
+            mediaRecorder.ondataavailable = (event) => {
+                if (event.data.size > 0) {
+                    recordedChunks.push(event.data);
+                }
+            };
+            
+            mediaRecorder.onstop = () => {
+                const blob = new Blob(recordedChunks, { type: 'video/webm' });
+                const url = URL.createObjectURL(blob);
+                downloadLink.href = url;
+                downloadLink.style.display = 'inline-block';
+                recordBtn.classList.remove('recording');
+                recordBtn.textContent = 'Record Video';
+                isRecording = false;
+            };
+            
+            mediaRecorder.start();
+            isRecording = true;
+            recordBtn.classList.add('recording');
+            recordBtn.textContent = 'Recording...';
+        }
+
+        function stopRecording() {
+            if (mediaRecorder && mediaRecorder.state !== 'inactive') {
+                mediaRecorder.stop();
+                isPlaying = false;
+                playBtn.textContent = 'Play Animation';
+            }
+        }
+
+        // Event listeners
+        playBtn.addEventListener('click', () => {
+            isPlaying = !isPlaying;
+            if (isPlaying) {
+                playBtn.textContent = 'Pause';
+                animate();
+            } else {
+                playBtn.textContent = 'Play Animation';
+            }
+        });
+
+        recordBtn.addEventListener('click', () => {
+            if (!isRecording) {
+                animationFrame = 0;
+                initElements();
+                startRecording();
+                isPlaying = true;
+                playBtn.textContent = 'Pause';
+                animate();
+            } else {
+                stopRecording();
+            }
+        });
+
+        resetBtn.addEventListener('click', () => {
+            animationFrame = 0;
+            isPlaying = false;
+            playBtn.textContent = 'Play Animation';
+            initElements();
+            drawBackground();
+            
+            // Welcome screen with animation
+            const gradient = ctx.createLinearGradient(0, canvas.height/2 - 100, canvas.width, canvas.height/2 + 100);
+            gradient.addColorStop(0, colors.primary);
+            gradient.addColorStop(0.5, '#fff');
+            gradient.addColorStop(1, colors.secondary);
+            
+            ctx.fillStyle = gradient;
+            ctx.font = '900 86px Inter';
+            ctx.textAlign = 'center';
+            ctx.fillText('IN VIVO CAR-T', canvas.width / 2, canvas.height / 2 - 50);
+            
+            ctx.font = '300 36px Inter';
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.8)';
+            ctx.fillText('Immune System Reset', canvas.width / 2, canvas.height / 2 + 20);
+            
+            ctx.font = '500 24px Inter';
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.5)';
+            ctx.fillText('Click Play to Begin', canvas.width / 2, canvas.height / 2 + 80);
+            
+            // Draw preview elements
+            ctx.save();
+            ctx.globalAlpha = 0.3;
+            
+            // Preview CAR-T cell
+            const previewCART = new Particle(300, 300, 40, colors.accent);
+            previewCART.engineered = true;
+            previewCART.draw();
+            
+            // Preview B cells
+            new Particle(1600, 300, 25, colors.bcell).draw();
+            new Particle(1650, 350, 25, colors.bcellAuto).draw();
+            
+            ctx.restore();
+        });
+
+        // Initialize
+        initElements();
+        resetBtn.click();
+    </script>
+</body>
+</html>
