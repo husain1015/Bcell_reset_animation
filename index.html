@@ -23,25 +23,7 @@
     }
 
     .floating-particles {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        pointer-events: none;
-        z-index: 1;
-    }
-
-    .particle {
-        position: absolute;
-        background: rgba(255, 255, 255, 0.1);
-        border-radius: 50%;
-        animation: float 6s ease-in-out infinite;
-    }
-
-    @keyframes float {
-        0%, 100% { transform: translateY(0px) rotate(0deg); opacity: 0.3; }
-        50% { transform: translateY(-20px) rotate(180deg); opacity: 0.8; }
+        display: none;
     }
 
     .container {
@@ -91,12 +73,6 @@
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
         background-clip: text;
-        animation: pulse 2s ease-in-out infinite alternate;
-    }
-
-    @keyframes pulse {
-        from { transform: scale(1); }
-        to { transform: scale(1.02); }
     }
 
     .subtitle {
@@ -114,13 +90,6 @@
         border-radius: 25px;
         font-weight: 600;
         display: inline-block;
-        animation: bounce 2s infinite;
-    }
-
-    @keyframes bounce {
-        0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
-        40% { transform: translateY(-10px); }
-        60% { transform: translateY(-5px); }
     }
 
     .section {
@@ -150,9 +119,9 @@
     }
 
     .section:hover {
-        transform: translateY(-8px) scale(1.02);
-        box-shadow: 0 15px 40px rgba(0,0,0,0.2);
-        border-color: rgba(255,255,255,0.5);
+        transform: translateY(-3px);
+        box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+        border-color: rgba(255,255,255,0.3);
     }
 
     .section.active {
@@ -197,8 +166,8 @@
 
     .section-number {
         position: absolute;
-        top: -10px;
-        right: 20px;
+        top: 10px;
+        right: 15px;
         background: linear-gradient(135deg, #667eea, #764ba2);
         color: white;
         width: 40px;
@@ -210,6 +179,7 @@
         font-weight: 700;
         font-size: 1.2rem;
         box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+        z-index: 10;
     }
 
     h2 {
@@ -224,16 +194,6 @@
     .section-icon {
         font-size: 1.8rem;
         margin-right: 1rem;
-        animation: rotate 4s linear infinite;
-    }
-
-    @keyframes rotate {
-        from { transform: rotate(0deg); }
-        to { transform: rotate(360deg); }
-    }
-
-    .section:hover .section-icon {
-        animation-duration: 0.5s;
     }
 
     .interactive-table {
@@ -264,9 +224,9 @@
     }
 
     .interactive-table tr:hover {
-        background: linear-gradient(135deg, #e3f2fd, #bbdefb);
-        transform: scale(1.01);
-        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+        transform: none;
+        box-shadow: none;
     }
 
     .metric-card {
@@ -299,8 +259,8 @@
     }
 
     .metric-card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 12px 30px rgba(0,0,0,0.2);
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(0,0,0,0.15);
     }
 
     .highlight-stat {
@@ -360,9 +320,9 @@
     }
 
     .interactive-list li:hover {
-        background: rgba(52, 152, 219, 0.1);
-        transform: translateX(10px);
-        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        background: rgba(52, 152, 219, 0.08);
+        transform: translateX(5px);
+        box-shadow: 0 2px 8px rgba(0,0,0,0.08);
     }
 
     .progress-bar {
@@ -438,8 +398,9 @@
 
     @media (max-width: 768px) {
         .container {
-            margin: 1rem;
+            margin: 0.5rem;
             padding: 1rem;
+            border-radius: 15px;
         }
         
         .floating-nav {
@@ -447,11 +408,72 @@
         }
         
         .section {
-            padding: 1.5rem;
+            padding: 1.2rem;
+            margin-bottom: 1.5rem;
         }
         
         h1 {
-            font-size: 2rem;
+            font-size: 1.8rem;
+            line-height: 1.2;
+        }
+        
+        .subtitle {
+            font-size: 1rem;
+            line-height: 1.4;
+        }
+        
+        .interactive-table {
+            font-size: 0.85rem;
+            display: block;
+            overflow-x: auto;
+            white-space: nowrap;
+        }
+        
+        .interactive-table th,
+        .interactive-table td {
+            padding: 0.8rem 0.6rem;
+            min-width: 120px;
+        }
+        
+        .metric-card {
+            padding: 1rem;
+            margin: 0.8rem 0;
+        }
+        
+        .highlight-stat {
+            font-size: 1.5rem;
+        }
+        
+        .section-number {
+            width: 35px;
+            height: 35px;
+            font-size: 1rem;
+            top: 8px;
+            right: 12px;
+        }
+        
+        .pill-tag {
+            font-size: 0.75rem;
+            padding: 0.25rem 0.6rem;
+        }
+        
+        .cta-section {
+            padding: 1.5rem 1rem;
+        }
+        
+        /* Optimize for iPhone portrait */
+        body {
+            font-size: 16px; /* Prevents zoom on iOS */
+        }
+        
+        .header {
+            margin-bottom: 2rem;
+            padding-bottom: 1.5rem;
+        }
+        
+        .timer {
+            font-size: 0.9rem;
+            padding: 0.4rem 0.8rem;
         }
     }
 
@@ -749,20 +771,9 @@
 </div>
 
 <script>
-    // Create floating particles
+    // Create floating particles - disabled for mobile optimization
     function createParticles() {
-        const container = document.querySelector('.floating-particles');
-        for (let i = 0; i < 20; i++) {
-            const particle = document.createElement('div');
-            particle.className = 'particle';
-            particle.style.left = Math.random() * 100 + '%';
-            particle.style.top = Math.random() * 100 + '%';
-            particle.style.width = (Math.random() * 6 + 2) + 'px';
-            particle.style.height = particle.style.width;
-            particle.style.animationDelay = Math.random() * 6 + 's';
-            particle.style.animationDuration = (Math.random() * 4 + 4) + 's';
-            container.appendChild(particle);
-        }
+        // Particles disabled for cleaner mobile experience
     }
 
     // Intersection Observer for fade-in animations
