@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Harmony & Health™ - 7-Minute Executive Playbook</title>
+    <title>Harmony & Health™ - 10-Minute Power Brief</title>
     <style>
         * {
             margin: 0;
@@ -20,10 +20,7 @@
         background: radial-gradient(circle at top right, #667eea 0%, #764ba2 100%);
         min-height: 100vh;
         overflow-x: hidden;
-    }
-
-    .floating-particles {
-        display: none;
+        font-size: 16px;
     }
 
     .container {
@@ -81,6 +78,7 @@
         font-weight: 400;
         font-style: italic;
         margin-bottom: 1rem;
+        line-height: 1.5;
     }
 
     .timer {
@@ -124,44 +122,49 @@
         border-color: rgba(255,255,255,0.3);
     }
 
-    .section.active {
-        transform: translateY(-8px) scale(1.02);
-        box-shadow: 0 15px 40px rgba(0,0,0,0.2);
-    }
-
-    .pain-signals {
+    .pain-points {
         background: linear-gradient(135deg, rgba(231, 76, 60, 0.1), rgba(192, 57, 43, 0.1));
         border-left: 5px solid #e74c3c;
     }
 
-    .service-stack {
-        background: linear-gradient(135deg, rgba(52, 152, 219, 0.1), rgba(41, 128, 185, 0.1));
-        border-left: 5px solid #3498db;
-    }
-
-    .location {
-        background: linear-gradient(135deg, rgba(243, 156, 18, 0.1), rgba(211, 134, 14, 0.1));
-        border-left: 5px solid #f39c12;
-    }
-
-    .revenue {
+    .glp1-market {
         background: linear-gradient(135deg, rgba(155, 89, 182, 0.1), rgba(142, 68, 173, 0.1));
         border-left: 5px solid #9b59b6;
     }
 
-    .marketing {
+    .celebrity-proof {
+        background: linear-gradient(135deg, rgba(243, 156, 18, 0.1), rgba(211, 134, 14, 0.1));
+        border-left: 5px solid #f39c12;
+    }
+
+    .glp1-program {
+        background: linear-gradient(135deg, rgba(52, 152, 219, 0.1), rgba(41, 128, 185, 0.1));
+        border-left: 5px solid #3498db;
+    }
+
+    .operations {
         background: linear-gradient(135deg, rgba(46, 204, 113, 0.1), rgba(39, 174, 96, 0.1));
         border-left: 5px solid #2ecc71;
     }
 
-    .risks {
+    .flywheel {
         background: linear-gradient(135deg, rgba(230, 126, 34, 0.1), rgba(211, 84, 0, 0.1));
         border-left: 5px solid #e67e22;
     }
 
-    .snapshot {
+    .kpis {
         background: linear-gradient(135deg, rgba(52, 73, 94, 0.1), rgba(44, 62, 80, 0.1));
         border-left: 5px solid #34495e;
+    }
+
+    .risks {
+        background: linear-gradient(135deg, rgba(192, 57, 43, 0.1), rgba(231, 76, 60, 0.1));
+        border-left: 5px solid #c0392b;
+    }
+
+    .punch-out {
+        background: linear-gradient(135deg, rgba(142, 68, 173, 0.1), rgba(155, 89, 182, 0.1));
+        border-left: 5px solid #8e44ad;
     }
 
     .section-number {
@@ -267,7 +270,7 @@
         font-size: 2rem;
         font-weight: 800;
         color: #e74c3c;
-        display: block;
+        display: inline-block;
         animation: countUp 2s ease-out forwards;
     }
 
@@ -293,16 +296,44 @@
         box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
     }
 
-    .risk-indicator {
-        padding: 0.5rem;
-        border-radius: 8px;
-        margin: 0.5rem 0;
-        transition: all 0.3s ease;
+    .celebrity-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 1.5rem;
+        margin: 1.5rem 0;
     }
 
-    .risk-high { background: rgba(231, 76, 60, 0.1); border-left: 4px solid #e74c3c; }
-    .risk-medium { background: rgba(243, 156, 18, 0.1); border-left: 4px solid #f39c12; }
-    .risk-low { background: rgba(46, 204, 113, 0.1); border-left: 4px solid #2ecc71; }
+    .celebrity-card {
+        background: white;
+        padding: 1.5rem;
+        border-radius: 12px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        border-left: 4px solid #f39c12;
+    }
+
+    .celebrity-card h4 {
+        color: #2c3e50;
+        font-weight: 700;
+        margin-bottom: 0.5rem;
+    }
+
+    .status-confirmed {
+        background: rgba(46, 204, 113, 0.1);
+        color: #27ae60;
+        padding: 0.2rem 0.6rem;
+        border-radius: 15px;
+        font-size: 0.8rem;
+        font-weight: 600;
+    }
+
+    .status-speculation {
+        background: rgba(243, 156, 18, 0.1);
+        color: #f39c12;
+        padding: 0.2rem 0.6rem;
+        border-radius: 15px;
+        font-size: 0.8rem;
+        font-weight: 600;
+    }
 
     .interactive-list {
         list-style: none;
@@ -325,28 +356,86 @@
         box-shadow: 0 2px 8px rgba(0,0,0,0.08);
     }
 
-    .progress-bar {
-        width: 100%;
-        height: 8px;
-        background: #ecf0f1;
-        border-radius: 4px;
-        overflow: hidden;
-        margin: 1rem 0;
+    .pricing-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 1rem;
+        margin: 1.5rem 0;
     }
 
-    .progress-fill {
-        height: 100%;
-        background: linear-gradient(90deg, #3498db, #2ecc71);
-        border-radius: 4px;
-        animation: fillProgress 3s ease-in-out forwards;
+    .pricing-card {
+        background: white;
+        padding: 1.5rem;
+        border-radius: 12px;
+        text-align: center;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        border-top: 4px solid #9b59b6;
     }
 
-    @keyframes fillProgress {
-        from { width: 0%; }
-        to { width: var(--progress-width, 75%); }
+    .pricing-card h4 {
+        color: #2c3e50;
+        margin-bottom: 1rem;
     }
 
-    .cta-section {
+    .price {
+        font-size: 1.5rem;
+        font-weight: 800;
+        color: #e74c3c;
+        margin-bottom: 0.5rem;
+    }
+
+    .margin {
+        color: #27ae60;
+        font-weight: 600;
+    }
+
+    .risk-indicator {
+        padding: 0.5rem;
+        border-radius: 8px;
+        margin: 0.5rem 0;
+        transition: all 0.3s ease;
+    }
+
+    .risk-high { 
+        background: rgba(231, 76, 60, 0.1); 
+        border-left: 4px solid #e74c3c; 
+    }
+
+    .risk-medium { 
+        background: rgba(243, 156, 18, 0.1); 
+        border-left: 4px solid #f39c12; 
+    }
+
+    .risk-low { 
+        background: rgba(46, 204, 113, 0.1); 
+        border-left: 4px solid #2ecc71; 
+    }
+
+    .kpi-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1rem;
+        margin: 1.5rem 0;
+    }
+
+    .kpi-card {
+        background: white;
+        padding: 1.5rem;
+        border-radius: 12px;
+        text-align: center;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        border-top: 4px solid #34495e;
+    }
+
+    .kpi-value {
+        font-size: 1.8rem;
+        font-weight: 800;
+        color: #e74c3c;
+        display: block;
+        margin-bottom: 0.5rem;
+    }
+
+    .punch-out-quote {
         background: linear-gradient(135deg, #667eea, #764ba2);
         color: white;
         padding: 2rem;
@@ -355,17 +444,27 @@
         margin-top: 2rem;
         position: relative;
         overflow: hidden;
+        font-size: 1.1rem;
+        line-height: 1.7;
+        font-style: italic;
     }
 
-    .cta-section::before {
-        content: '';
+    .punch-out-quote::before {
+        content: '"';
+        font-size: 4rem;
         position: absolute;
-        top: -50%;
-        left: -50%;
-        width: 200%;
-        height: 200%;
-        background: linear-gradient(45deg, transparent, rgba(255,255,255,0.1), transparent);
-        animation: rotate 4s linear infinite;
+        top: 10px;
+        left: 20px;
+        opacity: 0.3;
+    }
+
+    .punch-out-quote::after {
+        content: '"';
+        font-size: 4rem;
+        position: absolute;
+        bottom: -10px;
+        right: 20px;
+        opacity: 0.3;
     }
 
     .floating-nav {
@@ -457,13 +556,18 @@
             padding: 0.25rem 0.6rem;
         }
         
-        .cta-section {
-            padding: 1.5rem 1rem;
+        .celebrity-grid {
+            grid-template-columns: 1fr;
         }
         
-        /* Optimize for iPhone portrait */
-        body {
-            font-size: 16px; /* Prevents zoom on iOS */
+        .pricing-grid,
+        .kpi-grid {
+            grid-template-columns: 1fr;
+        }
+        
+        .punch-out-quote {
+            padding: 1.5rem 1rem;
+            font-size: 1rem;
         }
         
         .header {
@@ -494,226 +598,281 @@
 
 </head>
 <body>
-    <div class="floating-particles"></div>
+    <div class="floating-nav">
+        <div class="nav-dot active" data-section="0"></div>
+        <div class="nav-dot" data-section="1"></div>
+        <div class="nav-dot" data-section="2"></div>
+        <div class="nav-dot" data-section="3"></div>
+        <div class="nav-dot" data-section="4"></div>
+        <div class="nav-dot" data-section="5"></div>
+        <div class="nav-dot" data-section="6"></div>
+        <div class="nav-dot" data-section="7"></div>
+        <div class="nav-dot" data-section="8"></div>
+    </div>
 
 ```
-<div class="floating-nav">
-    <div class="nav-dot active" data-section="0"></div>
-    <div class="nav-dot" data-section="1"></div>
-    <div class="nav-dot" data-section="2"></div>
-    <div class="nav-dot" data-section="3"></div>
-    <div class="nav-dot" data-section="4"></div>
-    <div class="nav-dot" data-section="5"></div>
-    <div class="nav-dot" data-section="6"></div>
-</div>
-
 <div class="container">
     <header class="header fade-in">
         <h1>Harmony & Health™</h1>
-        <p class="subtitle">Women-only, privacy-first hub fusing yoga, GLP-1-powered medical weight loss, and culturally attuned care for Vadodara's modern woman.</p>
-        <div class="timer">⏱️ 7-Minute Executive Playbook</div>
+        <p class="subtitle">Building Vadodara's first women-only, privacy-centric wellness hub that fuses therapeutic yoga with GLP-1–powered medical weight loss and culturally attuned care.</p>
+        <div class="timer">⏱️ 10-Minute Power Brief</div>
     </header>
 
-    <section class="section pain-signals fade-in" data-section="1">
+    <section class="section pain-points fade-in" data-section="1">
         <div class="section-number">1</div>
-        <h2><span class="section-icon">🎯</span>Market Pain Signals ➜ Solution Hooks</h2>
+        <h2><span class="section-icon">🎯</span>Rapid Pain-Point Recap ➜ Strategic Levers</h2>
         
         <table class="interactive-table">
             <thead>
                 <tr>
-                    <th>Pain Signal</th>
+                    <th>Pain Cluster</th>
                     <th>Why It Hurts</th>
-                    <th>Harmony & Health™ Counter-Strike</th>
+                    <th>Strategic Response</th>
                 </tr>
             </thead>
             <tbody>
                 <tr>
                     <td><strong>Yoga ≠ Calorie Torch</strong></td>
-                    <td>Patrons discover slow weight change despite daily asanas</td>
-                    <td>Yoga becomes the mind-muscle primer; metabolic deficit is delivered by dietetics, resistance training and GLP-1 pharmacology</td>
+                    <td>Low thermic load stalls fat loss</td>
+                    <td>Yoga becomes the mobility-mindfulness primer; caloric deficit is driven by dietetics, resistance work and GLP-1 pharmacology</td>
                 </tr>
                 <tr>
                     <td><strong>Dietary Drift & Relapse</strong></td>
-                    <td><span class="highlight-stat">70%</span> of dieters regain weight inside 12m</td>
-                    <td>Physician-led appetite regulation via semaglutide / tirzepatide + CBT-based craving clinics</td>
+                    <td><span class="highlight-stat">70%</span> regain weight in 12m</td>
+                    <td>Physician-led appetite modulation (semaglutide, tirzepatide) + CBT craving labs</td>
                 </tr>
                 <tr>
                     <td><strong>Biomechanical Barriers</strong></td>
-                    <td>Heavier bodies struggle with vinyasa transitions</td>
-                    <td>Chair / wall yoga tracks, joint-safe props, and phased strength onboarding</td>
+                    <td>Plus-size bodies struggle with vinyasa</td>
+                    <td>Chair/wall tracks, joint-safe props, phased strength onboarding</td>
                 </tr>
                 <tr>
-                    <td><strong>Self-acceptance vs Body-change Dissonance</strong></td>
-                    <td>Emotional whiplash derails adherence</td>
-                    <td>KPI-focused coaching: %-weight loss, VO₂, QOL rather than aesthetics alone</td>
+                    <td><strong>Self-image Whiplash</strong></td>
+                    <td>Acceptance vs. body-change tension</td>
+                    <td>KPI framing: %-weight-loss, VO₂submax & QOL, not just aesthetics</td>
                 </tr>
                 <tr>
-                    <td><strong>Privacy & Cultural Fit</strong></td>
-                    <td>Muslim women skip mixed-gender gyms</td>
-                    <td>Women-only floorplate, female staff, hijab-friendly dress code, prayer nook</td>
+                    <td><strong>Privacy & Culture</strong></td>
+                    <td>Muslim women avoid mixed gyms</td>
+                    <td>Women-only space, hijab-friendly dress code, prayer nook</td>
                 </tr>
             </tbody>
         </table>
     </section>
 
-    <section class="section service-stack fade-in" data-section="2">
+    <section class="section glp1-market fade-in" data-section="2">
         <div class="section-number">2</div>
-        <h2><span class="section-icon">🏗️</span>The Four-Pillar Service Stack</h2>
+        <h2><span class="section-icon">🚀</span>GLP-1 Market Disruption—Why We Must Own It</h2>
         
-        <div class="metric-card">
-            <h3><strong>1. Metabolic Yoga Ladder™</strong></h3>
-            <ul class="interactive-list">
-                <li>Three tracks: Gentle, Metabolic Flow, Power Burn</li>
-                <li>Pose-mod libraries for plus-size joints and post-partum cores</li>
-                <li>Each session tagged with projected energy expenditure (kcal / hr)</li>
-            </ul>
-        </div>
+        <table class="interactive-table">
+            <thead>
+                <tr>
+                    <th>Metric</th>
+                    <th>Global</th>
+                    <th>India</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>Market size</strong></td>
+                    <td>Obesity-drug TAM forecast <span class="highlight-stat">$105B</span> by 2030</td>
+                    <td>Tirzepatide (Mounjaro) launched Mar 2025; 2.5 mg vial <span class="highlight-stat">₹3,500</span></td>
+                </tr>
+                <tr>
+                    <td><strong>Efficacy</strong></td>
+                    <td>Avg. <span class="highlight-stat">15-20%</span> body-weight drop in trials</td>
+                    <td>Hansal Mehta publicly dropped <span class="highlight-stat">10 kg</span> on Mounjaro</td>
+                </tr>
+                <tr>
+                    <td><strong>Aspirational pull</strong></td>
+                    <td>Elon Musk (Wegovy), Oprah Winfrey (Wegovy), Sharon Osbourne (Ozempic)</td>
+                    <td>• Hansal Mehta (admits)<br>• Speculation frenzy around Karan Johar, Badshah & others</td>
+                </tr>
+            </tbody>
+        </table>
 
         <div class="metric-card">
-            <h3><strong>2. Science-Grade GLP-1 Therapy</strong> <span class="pill-tag">Flagship Differentiator</span></h3>
-            <p><strong>Brands on shelf:</strong></p>
-            <ul class="interactive-list">
-                <li><strong>Tirzepatide (Mounjaro®)</strong> — launched Mar 2025 in India; dual GIP/GLP-1 agonist driving <span class="highlight-stat">≥15%</span> weight loss</li>
-                <li><strong>Semaglutide (Wegovy® pens; Rybelsus® oral)</strong> — Wegovy slated to hit India H2 2025; oral Rybelsus already growing <span class="highlight-stat">4× YoY</span></li>
-            </ul>
-            
-            <p><strong>Care Pathway:</strong></p>
-            <ol class="interactive-list">
-                <li>MD risk-screens (CV profile, retinopathy)</li>
-                <li>Month-1 dose-titration with GI support toolkit</li>
-                <li>Digital adherence prompts + side-effect watch (EMA flagged rare eye events)</li>
-                <li>Quarterly lab panel & DXA scan; auto-de-escalate when BMI target met</li>
-            </ol>
-            
-            <div class="metric-card">
-                <strong>Economics:</strong> negotiated wholesale price, margin <span class="highlight-stat">22%</span>; monthly therapy upsell adds <span class="highlight-stat">₹12k–₹15k</span> ARPU.
+            <h3><strong>Supply Wave:</strong></h3>
+            <p>Eli Lilly and Novo Nordisk scaling fill-finish plants; auxiliary suppliers (Gerresheimer) project <span class="highlight-stat">€350M</span> GLP-1 component revenue by 2028—assuring long-term vial availability for our clinic.</p>
+        </div>
+    </section>
+
+    <section class="section celebrity-proof fade-in" data-section="3">
+        <div class="section-number">3</div>
+        <h2><span class="section-icon">⭐</span>Celebrity Proof-Points—Social Credibility Engine</h2>
+        
+        <div class="celebrity-grid">
+            <div class="celebrity-card">
+                <h4>International <span class="status-confirmed">Confirmed</span></h4>
+                <ul class="interactive-list">
+                    <li><strong>Elon Musk</strong> – credits Wegovy for a 25-lb cut in 2024</li>
+                    <li><strong>Oprah Winfrey</strong> – went public Dec 2023 on medication support</li>
+                    <li><strong>Sharon Osbourne</strong> – lost 42 lbs on Ozempic in 2023</li>
+                    <li><strong>Amy Schumer</strong> – shifted from Wegovy to Mounjaro (March 2025 IG)</li>
+                </ul>
+            </div>
+
+            <div class="celebrity-card">
+                <h4>India <span class="status-speculation">Mixed Status</span></h4>
+                <ul class="interactive-list">
+                    <li><strong>Hansal Mehta</strong> – openly crediting Mounjaro for 10 kg drop (2025) <span class="status-confirmed">Confirmed</span></li>
+                    <li><strong>Karan Johar</strong> – denies Ozempic but chatter boosts awareness <span class="status-speculation">Speculation</span></li>
+                    <li><strong>Badshah</strong> – transformation sparks Ozempic speculation <span class="status-speculation">Speculation</span></li>
+                </ul>
             </div>
         </div>
 
         <div class="metric-card">
-            <h3><strong>3. Precision Nutrition & Habit Engineering</strong></h3>
-            <ul class="interactive-list">
-                <li>Halal-compliant meal blueprints, protein-leveraging strategy</li>
-                <li>In-studio meal-prep labs + app-based tracking</li>
-                <li>CBT micro-sessions for "Ozempic face/teeth" anxiety and binge offset</li>
-            </ul>
-        </div>
-
-        <div class="metric-card">
-            <h3><strong>4. Strength & Mobility Circuit</strong></h3>
-            <ul class="interactive-list">
-                <li>Glute/quad-centric machines to elevate resting metabolic rate</li>
-                <li>Periodised programs synch with GLP-1–driven appetite suppression to safeguard lean mass</li>
-            </ul>
+            <h3>🎯 Take-away:</h3>
+            <p>Mass-media narratives have normalised GLP-1s; our brand can ride the wave while positioning as the medically responsible gatekeeper.</p>
         </div>
     </section>
 
-    <section class="section location fade-in" data-section="3">
-        <div class="section-number">3</div>
-        <h2><span class="section-icon">📍</span>Location & Footprint</h2>
+    <section class="section glp1-program fade-in" data-section="4">
+        <div class="section-number">4</div>
+        <h2><span class="section-icon">🏥</span>Harmony & Health GLP-1 Program <span class="pill-tag">Flagship Differentiator</span></h2>
+        
+        <div class="metric-card">
+            <h3>4-Step Care Pathway</h3>
+            <ol class="interactive-list">
+                <li><strong>Clinical On-Ramp (Week 0)</strong><br>
+                    • Comprehensive metabolic panel, DXA scan, retinopathy screen.<br>
+                    • Eligibility matrix—exclude pancreatitis, severe GI disorders.</li>
+                <li><strong>Dose-Titration & Digital Tracking (Weeks 1-12)</strong><br>
+                    • Semaglutide 0.25-1 mg or Tirzepatide 2.5-15 mg ladder.<br>
+                    • App-pushed reminders, GI-support kit, 24×7 nurse hotline.</li>
+                <li><strong>Synergistic Conditioning (Weeks 4-24)</strong><br>
+                    • Metabolic Yoga Ladder™ + glute/quad strength circuits to protect lean mass.<br>
+                    • Halal-compliant high-protein nutrition plan (1.6 g/kg target).</li>
+                <li><strong>Stabilise & Step-Down (Post-goal)</strong><br>
+                    • Taper drug every 4-6 wks while escalating resistance volume.<br>
+                    • Behaviour-change sprints to lock in satiety signals without pharmacology.</li>
+            </ol>
+        </div>
+
+        <div class="metric-card">
+            <h3>Pricing & Margin Stack</h3>
+            <div class="pricing-grid">
+                <div class="pricing-card">
+                    <h4>GLP-1 package<br>(drug + supervision)</h4>
+                    <div class="price">₹12k-₹15k/mo</div>
+                    <div class="margin">45% Gross Margin</div>
+                </div>
+                <div class="pricing-card">
+                    <h4>Yoga & strength<br>membership</h4>
+                    <div class="price">₹2.5k/mo</div>
+                    <div class="margin">55% Gross Margin</div>
+                </div>
+                <div class="pricing-card">
+                    <h4>Nutrition/CBT<br>add-ons</h4>
+                    <div class="price">₹3k/mo</div>
+                    <div class="margin">60% Gross Margin</div>
+                </div>
+            </div>
+            <p style="text-align: center; margin-top: 1rem; font-weight: 600;">
+                Projected blended EBITDA <span class="highlight-stat">22%</span> in Year 3—GLP-1 upsell drives ARPU without bloating fixed costs.
+            </p>
+        </div>
+    </section>
+
+    <section class="section operations fade-in" data-section="5">
+        <div class="section-number">5</div>
+        <h2><span class="section-icon">🏢</span>Operational Blueprint</h2>
         
         <table class="interactive-table">
             <thead>
                 <tr>
                     <th>Zone</th>
-                    <th>Strategic Value</th>
-                    <th>Risk Guardrail</th>
+                    <th>Why It Wins</th>
                 </tr>
             </thead>
             <tbody>
                 <tr>
                     <td><strong>Tandalja / Vasna-Bhayli</strong></td>
-                    <td>High Muslim density, mid-range rents</td>
-                    <td class="risk-indicator risk-medium">Competitor yoga-bars → win on medical credibility</td>
+                    <td>Muslim catchment, mid-tier rent—win on medical differentiation</td>
                 </tr>
                 <tr>
-                    <td><strong>Gotri Road</strong></td>
-                    <td>Mixed affluence, healthcare cluster</td>
-                    <td class="risk-indicator risk-low">Traffic congestion → secure 10-car parking</td>
+                    <td><strong>Gotri Rd</strong></td>
+                    <td>Health-care corridor, affluent mix—upsell premium packages</td>
                 </tr>
                 <tr>
-                    <td><strong>Fatehgunj fringe (Alkapuri)</strong></td>
-                    <td>Central, premium wallets</td>
-                    <td class="risk-indicator risk-high">Lease premium → opt for 2F+ floor to cut ₹/sq ft</td>
+                    <td><strong>Fatehgunj fringe</strong></td>
+                    <td>Central access, professional clientele—higher pricing tier</td>
                 </tr>
             </tbody>
         </table>
 
         <div class="metric-card">
-            <h3>Space Blueprint (<span class="highlight-stat">3,500 sq ft</span>):</h3>
-            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-top: 1rem;">
-                <div class="metric-card">40% yoga studio</div>
-                <div class="metric-card">25% consult suites (MD, RD, psychologist)</div>
-                <div class="metric-card">15% circuit zone</div>
-                <div class="metric-card">10% mindfulness lounge</div>
-                <div class="metric-card">10% ops</div>
+            <h3>Floorplate (<span class="highlight-stat">3,500 sq ft</span>)</h3>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1rem; margin-top: 1rem;">
+                <div class="pricing-card" style="border-top-color: #e74c3c;">
+                    <h4>Studio</h4>
+                    <div class="price">40%</div>
+                </div>
+                <div class="pricing-card" style="border-top-color: #3498db;">
+                    <h4>Consult Suites</h4>
+                    <div class="price">25%</div>
+                </div>
+                <div class="pricing-card" style="border-top-color: #2ecc71;">
+                    <h4>Circuit</h4>
+                    <div class="price">15%</div>
+                </div>
+                <div class="pricing-card" style="border-top-color: #f39c12;">
+                    <h4>Mindfulness Lounge</h4>
+                    <div class="price">10%</div>
+                </div>
+                <div class="pricing-card" style="border-top-color: #9b59b6;">
+                    <h4>Operations</h4>
+                    <div class="price">10%</div>
+                </div>
+            </div>
+            <p style="text-align: center; margin-top: 1rem; font-style: italic;">Prayer room carved out of lounge.</p>
+        </div>
+    </section>
+
+    <section class="section flywheel fade-in" data-section="6">
+        <div class="section-number">6</div>
+        <h2><span class="section-icon">🔄</span>Commercial Flywheel</h2>
+        
+        <ol class="interactive-list">
+            <li><strong>Physician Referral Engine</strong> – gynaecologists & endocrinologists, <span class="highlight-stat">10%</span> rev-share vouchers.</li>
+            <li><strong>Influencer Reels</strong> – "Hijab-friendly power yoga" + "GLP-1 myth-busting (Gujarati/Hindi subtitles)".</li>
+            <li><strong>Outcome-Based Pricing Pilot</strong> – refund <span class="pill-tag">20%</span> of fees if client misses 5% weight-loss at 6m (≥80% compliance).</li>
+            <li><strong>Corporate Wellness Plug-ins</strong> – female workforce vitality programs for IT parks.</li>
+        </ol>
+    </section>
+
+    <section class="section kpis fade-in" data-section="7">
+        <div class="section-number">7</div>
+        <h2><span class="section-icon">📊</span>KPI Dashboard (Year-1 Targets)</h2>
+        
+        <div class="kpi-grid">
+            <div class="kpi-card">
+                <span class="kpi-value">≥75%</span>
+                <p>Retention at M6</p>
+            </div>
+            <div class="kpi-card">
+                <span class="kpi-value">≥10%</span>
+                <p>Average weight-loss in GLP-1 cohort</p>
+            </div>
+            <div class="kpi-card">
+                <span class="kpi-value">≥65</span>
+                <p>NPS Score</p>
+            </div>
+            <div class="kpi-card">
+                <span class="kpi-value">< ₹450</span>
+                <p>Customer Acquisition Cost</p>
+            </div>
+            <div class="kpi-card">
+                <span class="kpi-value">≥30%</span>
+                <p>Physician referrals of qualified leads</p>
             </div>
         </div>
     </section>
 
-    <section class="section revenue fade-in" data-section="4">
-        <div class="section-number">4</div>
-        <h2><span class="section-icon">💰</span>Revenue Architecture & KPIs</h2>
-        
-        <table class="interactive-table">
-            <thead>
-                <tr>
-                    <th>Stream</th>
-                    <th>Avg Ticket</th>
-                    <th>% Mix Yr 3</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td><strong>Yoga memberships</strong></td>
-                    <td>₹2,500 / mo</td>
-                    <td><span class="highlight-stat">35%</span></td>
-                </tr>
-                <tr>
-                    <td><strong>GLP-1 medical packages</strong></td>
-                    <td>₹12,000 / mo</td>
-                    <td><span class="highlight-stat">40%</span></td>
-                </tr>
-                <tr>
-                    <td><strong>Nutrition / CBT add-ons</strong></td>
-                    <td>₹3,000 / mo</td>
-                    <td><span class="highlight-stat">15%</span></td>
-                </tr>
-                <tr>
-                    <td><strong>Retail & digital (apps, merch)</strong></td>
-                    <td>Variable</td>
-                    <td><span class="highlight-stat">10%</span></td>
-                </tr>
-            </tbody>
-        </table>
-
-        <div class="metric-card">
-            <h3>North-Star Metrics (12m):</h3>
-            <ul class="interactive-list">
-                <li><span class="highlight-stat">≥75%</span> retention at M6</li>
-                <li>Mean weight loss <span class="highlight-stat">≥10%</span> in GLP-1 cohort</li>
-                <li>NPS <span class="highlight-stat">≥65</span></li>
-                <li>CAC <span class="highlight-stat">< ₹450</span> (SEO + physician referral)</li>
-            </ul>
-        </div>
-    </section>
-
-    <section class="section marketing fade-in" data-section="5">
-        <div class="section-number">5</div>
-        <h2><span class="section-icon">🚀</span>Go-to-Market Flywheel</h2>
-        
-        <ol class="interactive-list">
-            <li><strong>Physician Referral Engine</strong> — gynaecologists / endocrinologists, <span class="highlight-stat">10%</span> rev-share vouchers</li>
-            <li><strong>Influencer Micro-Content</strong> — Instagram Reels: "Hijab-friendly power yoga" + "GLP-1 myth-busting in Gujarati"</li>
-            <li><strong>Community Activation</strong> — post-Ramadan bootcamps at mosques, Halal meal-prep pop-ups</li>
-            <li><strong>Outcome-Based Pricing Pilot</strong> — <span class="pill-tag">20% refund</span> if client misses 5% weight-loss at 6m (with ≥80% check-in compliance)</li>
-            <li><strong>Corporate Wellness Plug-ins</strong> — female-workforce vitality packages for IT parks</li>
-        </ol>
-    </section>
-
-    <section class="section risks fade-in" data-section="6">
-        <div class="section-number">6</div>
-        <h2><span class="section-icon">⚠️</span>Risk Register & Hard Truths</h2>
+    <section class="section risks fade-in" data-section="8">
+        <div class="section-number">8</div>
+        <h2><span class="section-icon">⚠️</span>Risk & Mitigation Matrix</h2>
         
         <table class="interactive-table">
             <thead>
@@ -726,71 +885,39 @@
             <tbody>
                 <tr>
                     <td class="risk-indicator risk-high">Drug supply volatility</td>
-                    <td>Revenue dip</td>
-                    <td>Multi-vendor procurement; keep 3-month buffer stock</td>
+                    <td>Revenue shock</td>
+                    <td>Multi-vendor buffer stock; scripted cross-switch to oral Rybelsus where feasible</td>
                 </tr>
                 <tr>
-                    <td class="risk-indicator risk-high">GLP-1 side-effect PR</td>
+                    <td class="risk-indicator risk-high">Side-effect PR</td>
                     <td>Brand damage</td>
-                    <td>Pre-treatment education, 24×7 nurse hotline, strict triage protocol</td>
+                    <td>Pre-treatment counselling, nurse hotline, transparent SAE dashboard</td>
                 </tr>
                 <tr>
-                    <td class="risk-indicator risk-medium">OPEX creep Yr 1</td>
+                    <td class="risk-indicator risk-medium">OPEX creep</td>
                     <td>Cash squeeze</td>
-                    <td>Lease-to-own equipment, phased hiring, CSR grant taps</td>
+                    <td>Lease-to-own equipment; phased hiring; CSR health grants</td>
                 </tr>
                 <tr>
-                    <td class="risk-indicator risk-high">Regulatory audit (Schedule X drugs)</td>
+                    <td class="risk-indicator risk-high">Regulatory audit (Schedule X)</td>
                     <td>Licence threat</td>
-                    <td>Partner with NABH-certified clinic; separate pharmacy licence</td>
+                    <td>Partner NABH-certified clinic; standalone pharmacy licence; quarterly compliance review</td>
                 </tr>
             </tbody>
         </table>
-
-        <div class="metric-card">
-            <h3>🚫 Hard Truths:</h3>
-            <p>Skip the MD or RD and the "medical" tag collapses; underfund drug inventory and churn spikes; ignore strength training and GLP-1 patients melt muscle instead of fat.</p>
-        </div>
     </section>
 
-    <section class="section snapshot fade-in" data-section="7">
-        <div class="section-number">7</div>
-        <h2><span class="section-icon">📈</span>Strategic Snapshot</h2>
+    <section class="section punch-out fade-in" data-section="9">
+        <div class="section-number">9</div>
+        <h2><span class="section-icon">🎯</span>Punch-Out: Seize the Zeitgeist</h2>
         
-        <div class="cta-section">
-            <h3>The Opportunity</h3>
-            <p>Harmony & Health™ welds yoga's mindfulness, GLP-1's metabolic firepower, and culturally aligned privacy into a single P&L engine—exactly where Vadodara's <span class="highlight-stat">100k</span> overweight women, <span class="highlight-stat">11k</span> of whom are Muslim, are still unserved.</p>
-            
-            <div class="progress-bar">
-                <div class="progress-fill" style="--progress-width: 85%;"></div>
-            </div>
-            
-            <p><strong>Execute on physician trust, data-driven outcomes, and women-only sanctuary, and the centre is cash-flow positive inside 18 months while owning the first-mover moat in Gujarat's ₹600 cr anti-obesity drug upswing.</strong></p>
+        <div class="punch-out-quote">
+            GLP-1s are to metabolic health what AI is to knowledge work—the acceleration layer. Harmony & Health™ owns that layer for Vadodara's women, blending molecular horsepower with mindful movement in a privacy-first sanctuary. The competitors sell classes; we sell clinically-verified body recomposition with cultural respect baked in. Secure the site, lock the drug supply, and we'll be cash-positive inside 18 months—just as the ₹600-crore Indian GLP-1 wave crests.
         </div>
     </section>
 </div>
 
 <script>
-    // Create floating particles - disabled for mobile optimization
-    function createParticles() {
-        // Particles disabled for cleaner mobile experience
-    }
-
-    // Intersection Observer for fade-in animations
-    const observerOptions = {
-        threshold: 0.1,
-        rootMargin: '0px 0px -100px 0px'
-    };
-
-    const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                entry.target.style.animationDelay = '0.2s';
-                entry.target.style.animationPlayState = 'running';
-            }
-        });
-    }, observerOptions);
-
     // Navigation dots functionality
     const navDots = document.querySelectorAll('.nav-dot');
     const sections = document.querySelectorAll('.section');
@@ -816,6 +943,21 @@
         });
     });
 
+    // Intersection Observer for fade-in animations
+    const observerOptions = {
+        threshold: 0.1,
+        rootMargin: '0px 0px -100px 0px'
+    };
+
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.style.animationDelay = '0.2s';
+                entry.target.style.animationPlayState = 'running';
+            }
+        });
+    }, observerOptions);
+
     // Enhanced hover effects for sections
     sections.forEach(section => {
         section.addEventListener('mouseenter', () => {
@@ -829,7 +971,6 @@
 
     // Initialize
     document.addEventListener('DOMContentLoaded', () => {
-        createParticles();
         document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
         
         // Animate numbers
